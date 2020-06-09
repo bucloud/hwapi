@@ -18,7 +18,7 @@ type Services struct {
 }
 
 //Get available services list
-func (api *hwapi) GetServices(accountHash string) (*Services, error) {
+func (api *HWApi) GetServices(accountHash string) (*Services, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

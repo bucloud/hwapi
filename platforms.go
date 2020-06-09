@@ -22,7 +22,7 @@ type Platform struct {
 
 //List all platforms enabled on the specified account
 //Path /api/v1/accounts/{account_hash}/platforms
-func (api *hwapi) GetPlatforms(accountHash string) (*PlatformList, error) {
+func (api *HWApi) GetPlatforms(accountHash string) (*PlatformList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

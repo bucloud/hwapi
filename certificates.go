@@ -57,7 +57,7 @@ type HostsForCertificate map[string][]string
 
 //List all certificates on an account
 //Path /api/v1/accounts/{account_hash}/certificates
-func (api *hwapi) GetCertificates(accountHash string) (*CertificateResponse, error) {
+func (api *HWApi) GetCertificates(accountHash string) (*CertificateResponse, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -73,7 +73,7 @@ func (api *hwapi) GetCertificates(accountHash string) (*CertificateResponse, err
 
 //Upload a new certificate
 //Path /api/v1/accounts/{account_hash}/certificates
-func (api *hwapi) UploadCertificate(accountHash string, certificate *Certificate) (*Certificate, error) {
+func (api *HWApi) UploadCertificate(accountHash string, certificate *Certificate) (*Certificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -90,7 +90,7 @@ func (api *hwapi) UploadCertificate(accountHash string, certificate *Certificate
 
 //Delete a certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *hwapi) DeleteCertificate(accountHash string, cert_id int) (bool, error) {
+func (api *HWApi) DeleteCertificate(accountHash string, cert_id int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -105,7 +105,7 @@ func (api *hwapi) DeleteCertificate(accountHash string, cert_id int) (bool, erro
 
 //Get a certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *hwapi) GetCertificate(accountHash string, cert_id int) (*Certificate, error) {
+func (api *HWApi) GetCertificate(accountHash string, cert_id int) (*Certificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -121,7 +121,7 @@ func (api *hwapi) GetCertificate(accountHash string, cert_id int) (*Certificate,
 
 //Update a certificate (useful for expired certs)
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *hwapi) UpdateCertificate(accountHash string, cert_id int) (*Certificate, error) {
+func (api *HWApi) UpdateCertificate(accountHash string, cert_id int) (*Certificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
@@ -137,7 +137,7 @@ func (api *hwapi) UpdateCertificate(accountHash string, cert_id int) (*Certifica
 
 //Get Hosts for Certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}/hosts
-func (api *hwapi) GetHostsForCertificate(accountHash string, cert_id int) (*HostsForCertificate, error) {
+func (api *HWApi) GetHostsForCertificate(accountHash string, cert_id int) (*HostsForCertificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

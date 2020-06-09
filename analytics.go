@@ -133,7 +133,7 @@ type AnalyticsQuery struct {
 //Returns batch job status, or results if completed for specified job ID
 //Path /api/v1/accounts/{account_hash}/analytics/poll
 //Doesn't implemented
-func (api *hwapi) BatchJob(accountHash string) {
+func (api *HWApi) BatchJob(accountHash string) {
 	// r, e := api.Request(
 	// &Request{
 	// Method: GET,
@@ -150,24 +150,24 @@ func (api *hwapi) BatchJob(accountHash string) {
 
 //Returns http status code analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/status
-func (api *hwapi) GetStatusData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
+func (api *HWApi) GetStatusData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("status", accountHash, q)
 }
 
 //Returns account storage analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/storage
-func (api *hwapi) GetStorageData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
+func (api *HWApi) GetStorageData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("storage", accountHash, q)
 }
 
 //Returns account transfer analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/transfer
-func (api *hwapi) GetTransferData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
+func (api *HWApi) GetTransferData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("transfer", accountHash, q)
 }
 
 //Get analytics Data wrap
-func (api *hwapi) GetAnalytics(dt string, accountHash string, query interface{}) (*Analytics, error) {
+func (api *HWApi) GetAnalytics(dt string, accountHash string, query interface{}) (*Analytics, error) {
 	qm := make(map[string]string)
 	switch q := query.(type) {
 	case *AnalyticsQuery:

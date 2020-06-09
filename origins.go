@@ -41,7 +41,7 @@ type OriginList struct {
 
 //Create a new origin
 //Path /api/v1/accounts/{account_hash}/origins
-func (api *hwapi) CreateOrigin(accountHash string, origin *Origin) (*Origin, error) {
+func (api *HWApi) CreateOrigin(accountHash string, origin *Origin) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -58,7 +58,7 @@ func (api *hwapi) CreateOrigin(accountHash string, origin *Origin) (*Origin, err
 
 //List all origins on an account
 //Path /api/v1/accounts/{account_hash}/origins
-func (api *hwapi) GetOrigins(accountHash string) (*OriginList, error) {
+func (api *HWApi) GetOrigins(accountHash string) (*OriginList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -74,7 +74,7 @@ func (api *hwapi) GetOrigins(accountHash string) (*OriginList, error) {
 
 //Delete an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
-func (api *hwapi) DeleteOrigin(accountHash string, originID int) (bool, error) {
+func (api *HWApi) DeleteOrigin(accountHash string, originID int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -89,7 +89,7 @@ func (api *hwapi) DeleteOrigin(accountHash string, originID int) (bool, error) {
 
 //Update an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
-func (api *hwapi) UpdateOrigin(accountHash string, originID int, origin *Origin) (*Origin, error) {
+func (api *HWApi) UpdateOrigin(accountHash string, originID int, origin *Origin) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
@@ -106,7 +106,7 @@ func (api *hwapi) UpdateOrigin(accountHash string, originID int, origin *Origin)
 
 //Get an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
-func (api *hwapi) GetOrigin(accountHash string, originID int) (*Origin, error) {
+func (api *HWApi) GetOrigin(accountHash string, originID int) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

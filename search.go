@@ -17,7 +17,7 @@ type SearchResult struct {
 	Users      []*User              `json:"users"`
 }
 
-func (api *hwapi) Search(accountHash string, search string, maxResults int) (*SearchResult, error) {
+func (api *HWApi) Search(accountHash string, search string, maxResults int) (*SearchResult, error) {
 	if maxResults == 0 {
 		maxResults = 5
 	}

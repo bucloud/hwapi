@@ -138,7 +138,7 @@ type PasswordReset struct {
 	PasswordReset string
 }
 
-func (api *hwapi) AboutMe() (*User, error) {
+func (api *HWApi) AboutMe() (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -153,7 +153,7 @@ func (api *hwapi) AboutMe() (*User, error) {
 
 //Detech wether username exists under currentAccount
 //Note, this function had deprecated
-func (api *hwapi) HasUser(username string) (bool, error) {
+func (api *HWApi) HasUser(username string) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: GET,
@@ -167,7 +167,7 @@ func (api *hwapi) HasUser(username string) (bool, error) {
 }
 
 //Update currentUser
-func (api *hwapi) UpdateMe(user *User) (*User, error) {
+func (api *HWApi) UpdateMe(user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
@@ -182,7 +182,7 @@ func (api *hwapi) UpdateMe(user *User) (*User, error) {
 }
 
 //Update user
-func (api *hwapi) UpdateUser(accountHash string, uid int, user *User) (*User, error) {
+func (api *HWApi) UpdateUser(accountHash string, uid int, user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
@@ -197,7 +197,7 @@ func (api *hwapi) UpdateUser(accountHash string, uid int, user *User) (*User, er
 }
 
 //Get user info by userID under account
-func (api *hwapi) AboutUser(accountHash string, uid int) (*User, error) {
+func (api *HWApi) AboutUser(accountHash string, uid int) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -211,7 +211,7 @@ func (api *hwapi) AboutUser(accountHash string, uid int) (*User, error) {
 }
 
 //Delete user by userID under account
-func (api *hwapi) DeleteUser(accountHash string, uid int) (bool, error) {
+func (api *HWApi) DeleteUser(accountHash string, uid int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -225,7 +225,7 @@ func (api *hwapi) DeleteUser(accountHash string, uid int) (bool, error) {
 }
 
 //Get users for account
-func (api *hwapi) GetUsers(accountHash string) (*UserList, error) {
+func (api *HWApi) GetUsers(accountHash string) (*UserList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -240,7 +240,7 @@ func (api *hwapi) GetUsers(accountHash string) (*UserList, error) {
 }
 
 //Greate new user for account
-func (api *hwapi) CreateUser(accountHash string, user *User) (*User, error) {
+func (api *HWApi) CreateUser(accountHash string, user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,

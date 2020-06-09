@@ -4040,7 +4040,7 @@ type ConfigurationScope struct {
 //Get configuration graph
 //Path /api/v1/accounts/{account_hash}/graph
 //Get configuration graph
-func (api *hwapi) GetConfigurationGraph(accountHash string) (*Graph, error) {
+func (api *HWApi) GetConfigurationGraph(accountHash string) (*Graph, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4057,7 +4057,7 @@ func (api *hwapi) GetConfigurationGraph(accountHash string) (*Graph, error) {
 //List the hostnames that exist for an account
 //Path /api/v1/accounts/{account_hash}/hostnames
 //List the hostnames that exist for an account
-func (api *hwapi) GetHostNames(accountHash string) (*ConfigurationHostNamesList, error) {
+func (api *HWApi) GetHostNames(accountHash string) (*ConfigurationHostNamesList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4074,7 +4074,7 @@ func (api *hwapi) GetHostNames(accountHash string) (*ConfigurationHostNamesList,
 //Create a new configuration scope for a given host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/scopes
 //Create a new configuration scope for a given host
-func (api *hwapi) CreateScope(accountHash string, hostHash string, scope *Scope) (bool, error) {
+func (api *HWApi) CreateScope(accountHash string, hostHash string, scope *Scope) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: POST,
@@ -4091,7 +4091,7 @@ func (api *hwapi) CreateScope(accountHash string, hostHash string, scope *Scope)
 //List the scopes at which configuration exists for a given host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/scopes
 //List the scopes at which configuration exists for a given host
-func (api *hwapi) GetScopes(accountHash string, hostHash string) (*ConfigScopeList, error) {
+func (api *HWApi) GetScopes(accountHash string, hostHash string) (*ConfigScopeList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4108,7 +4108,7 @@ func (api *hwapi) GetScopes(accountHash string, hostHash string) (*ConfigScopeLi
 //Delete a configuration scope
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/{scope_id}
 //Delete a configuration scope
-func (api *hwapi) DeleteScope(accountHash string, hostHash string, scopeID int) (bool, error) {
+func (api *HWApi) DeleteScope(accountHash string, hostHash string, scopeID int) (bool, error) {
 	if _, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -4130,7 +4130,7 @@ func (c *Configuration) String() string {
 //Get host configuration at a certain scope
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/{scope_id}
 //Get host configuration at a certain scope
-func (api *hwapi) GetConfiguration(accountHash string, hostHash string, scopeID int) (*Configuration, error) {
+func (api *HWApi) GetConfiguration(accountHash string, hostHash string, scopeID int) (*Configuration, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4147,7 +4147,7 @@ func (api *hwapi) GetConfiguration(accountHash string, hostHash string, scopeID 
 //Update host configuration at a certain scope
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/{scope_id}
 //Update host configuration at a certain scope
-func (api *hwapi) UpdateConfiguration(accountHash string, hostHash string, scopeID int, configuration *Configuration) (*Configuration, error) {
+func (api *HWApi) UpdateConfiguration(accountHash string, hostHash string, scopeID int, configuration *Configuration) (*Configuration, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4173,7 +4173,7 @@ func (c *ConfigStatus) String() (string, error) {
 
 //Check on configuration update status
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}/configuration/{scope_id}/{configuration_receipt_id}
-func (api *hwapi) CheckConfigUpdateStatus(accountHash string, hostHash string, scopeID int, configurationID string) (*ConfigStatus, error) {
+func (api *HWApi) CheckConfigUpdateStatus(accountHash string, hostHash string, scopeID int, configurationID string) (*ConfigStatus, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -4189,7 +4189,7 @@ func (api *hwapi) CheckConfigUpdateStatus(accountHash string, hostHash string, s
 
 //List the configuration types that this API supports
 //Path /api/v1/configuration
-func (api *hwapi) GetConfigurationDoc() (string, error) {
+func (api *HWApi) GetConfigurationDoc() (string, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

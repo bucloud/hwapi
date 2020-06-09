@@ -12,7 +12,7 @@ func GetVersion() string {
 }
 
 //Check current API verion
-func (api *hwapi) GetServerVersion() (string, error) {
+func (api *HWApi) GetServerVersion() (string, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

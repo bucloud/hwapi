@@ -25,7 +25,7 @@ type IPs struct {
 
 //Returns the list of IPs used by the CDN
 //Path /api/v1/ips
-func (api *hwapi) GetIPs() (*IPs, error) {
+func (api *HWApi) GetIPs() (*IPs, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -41,7 +41,7 @@ func (api *hwapi) GetIPs() (*IPs, error) {
 
 //Returns the list of POPs (Point of Presence) on the CDN.
 //Path /api/v1/pops
-func (api *hwapi) GetPoPs() (*POPs, error) {
+func (api *HWApi) GetPoPs() (*POPs, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

@@ -41,7 +41,7 @@ const (
 )
 
 //Request wrap
-func (api *hwapi) Request(req *Request) (*Response, error) {
+func (api *HWApi) Request(req *Request) (*Response, error) {
 	if !strings.HasPrefix(req.Url, "http") {
 		if strings.HasPrefix(req.Url, "/") {
 			req.Url = apiBase + req.Url
@@ -112,7 +112,7 @@ func (api *hwapi) Request(req *Request) (*Response, error) {
 }
 
 //HWApi fetch function,add auth header and application/json header
-func (api *hwapi) Fetch(req *http.Request) (*Response, error) {
+func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 	if !strings.HasSuffix(req.URL.Path, "auth/token") && api.AuthToken == nil {
 		return nil, errors.New("This endpoint requires authentication")
 	}

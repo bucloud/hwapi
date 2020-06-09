@@ -68,7 +68,7 @@ type SubaccountList struct {
 }
 
 type SimpleAccount struct {
-	ID            int    `json:"id"`
+	ID            string `json:"id"`
 	AccountName   string `json:"accountName"`
 	AccountHash   string `json:"accountHash"`
 	AccountStatus string `json:"accountStatus"`
@@ -77,7 +77,7 @@ type SimpleAccount struct {
 //A CDN account
 type Account struct {
 	Id                        int         `json:"id"`                        //The id of the account
-	HashCode                  string      `json:"hashCode"`                  //The hash code of the account
+	AccountHash               string      `json:"accountHash"`               //The hash code of the account
 	AccountName               string      `json:"accountName"`               //The name of the account
 	SupportEmailAddress       string      `json:"supportEmailAddress"`       //The email address of the account's support contact
 	BillingAccountId          string      `json:"billingAccountId"`          //The read-only unique identifier in the billing system for the account
@@ -97,7 +97,7 @@ type Account struct {
 
 //GET verb implementation for a single Account The account fetched is the one set in the Account Context Thus, the AccountContextMiddleware is required
 //Path /api/v1/accounts/{account_hash}
-func (api *hwapi) GetAccount(accountHash string) (*Account, error) {
+func (api *HWApi) GetAccount(accountHash string) (*Account, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -113,7 +113,7 @@ func (api *hwapi) GetAccount(accountHash string) (*Account, error) {
 
 //Handles DELETE for accounts
 //Path /api/v1/accounts/{account_hash}
-func (api *hwapi) DeleteAccount(accountHash string) (bool, error) {
+func (api *HWApi) DeleteAccount(accountHash string) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -128,7 +128,7 @@ func (api *hwapi) DeleteAccount(accountHash string) (bool, error) {
 
 //Handles PUT for accounts, updating an existing account NOTE: only send configuration when absolutely necessary, and only for the accounts which are necessary to update
 //Path /api/v1/accounts/{account_hash}
-func (api *hwapi) UpdateAccount(accountHash string, accountInfo Account) (*Account, error) {
+func (api *HWApi) UpdateAccount(accountHash string, accountInfo Account) (*Account, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
@@ -145,7 +145,7 @@ func (api *hwapi) UpdateAccount(accountHash string, accountInfo Account) (*Accou
 
 //Get account activity
 //Path /api/v1/accounts/{account_hash}/activity
-func (api *hwapi) GetAccountActivity(accountHash string) (*Activity, error) {
+func (api *HWApi) GetAccountActivity(accountHash string) (*Activity, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -161,7 +161,7 @@ func (api *hwapi) GetAccountActivity(accountHash string) (*Activity, error) {
 
 //Get sales reps
 //Path /api/v1/accounts/{account_hash}/representatives
-func (api *hwapi) GetSales(accountHash string) (*RepresentativeList, error) {
+func (api *HWApi) GetSales(accountHash string) (*RepresentativeList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -177,7 +177,7 @@ func (api *hwapi) GetSales(accountHash string) (*RepresentativeList, error) {
 
 //GET verb implementation for a single Account's sub-accounts The account fetched is the one set in the Account Context Thus, the AccountContextMiddleware is required
 //Path /api/v1/accounts/{account_hash}/subaccounts
-func (api *hwapi) GetSubaccounts(accountHash string, recursive string) (*Account, error) {
+func (api *HWApi) GetSubaccounts(accountHash string, recursive string) (*Account, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -196,7 +196,7 @@ func (api *hwapi) GetSubaccounts(accountHash string, recursive string) (*Account
 
 //Handles POST for accounts, creating a new account
 //Path /api/v1/accounts/{parent_account_hash}
-func (api *hwapi) CreateAccount(parentAccountHash string, accountInfo *Account) (*Account, error) {
+func (api *HWApi) CreateAccount(parentAccountHash string, accountInfo *Account) (*Account, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -213,7 +213,7 @@ func (api *hwapi) CreateAccount(parentAccountHash string, accountInfo *Account) 
 
 //GET a list of a single Account's sub-accounts The account fetched is the one set in the Account Context Thus, the AccountContextMiddleware is required This endpoint only returns minimal information regarding subaccounts
 //Path /api/v3/accounts/{account_hash}/subaccounts
-func (api *hwapi) GetSubaccounts2(accountHash string) (*SubaccountList, error) {
+func (api *HWApi) GetSubaccounts2(accountHash string) (*SubaccountList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

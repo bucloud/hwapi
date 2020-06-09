@@ -28,7 +28,7 @@ type Host struct {
 
 //Create a new delivery host
 //Path /api/v1/accounts/{account_hash}/hosts
-func (api *hwapi) CreateHost(accountHash string, host CloneHost) (*Host, error) {
+func (api *HWApi) CreateHost(accountHash string, host CloneHost) (*Host, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -45,7 +45,7 @@ func (api *hwapi) CreateHost(accountHash string, host CloneHost) (*Host, error) 
 
 //List delivery hosts for the specified account
 //Path /api/v1/accounts/{account_hash}/hosts
-func (api *hwapi) GetHosts(accountHash string) (*HostList, error) {
+func (api *HWApi) GetHosts(accountHash string) (*HostList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -61,7 +61,7 @@ func (api *hwapi) GetHosts(accountHash string) (*HostList, error) {
 
 //Clone an existing delivery host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}
-func (api *hwapi) Get(accountHash string, hostHash string, cloneHost CloneHost) (*Host, error) {
+func (api *HWApi) Get(accountHash string, hostHash string, cloneHost CloneHost) (*Host, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -78,7 +78,7 @@ func (api *hwapi) Get(accountHash string, hostHash string, cloneHost CloneHost) 
 
 //Delete a delivery host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}
-func (api *hwapi) DeleteHost(accountHash string, hostHash string) (bool, error) {
+func (api *HWApi) DeleteHost(accountHash string, hostHash string) (bool, error) {
 	if _, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -94,7 +94,7 @@ func (api *hwapi) DeleteHost(accountHash string, hostHash string) (bool, error) 
 
 //Get a delivery host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}
-func (api *hwapi) GetHost(accountHash string, hostHash string) (*Host, error) {
+func (api *HWApi) GetHost(accountHash string, hostHash string) (*Host, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -110,7 +110,7 @@ func (api *hwapi) GetHost(accountHash string, hostHash string) (*Host, error) {
 
 //Update a delivery host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}
-func (api *hwapi) UpdateHost(accountHash string, hostHash string, host *Host) (*Host, error) {
+func (api *HWApi) UpdateHost(accountHash string, hostHash string, host *Host) (*Host, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,

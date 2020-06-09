@@ -22,7 +22,7 @@ type PurgeState struct {
 }
 
 //Get purge status
-func (api *hwapi) GetPurgeState(accountHash string, purgeID string) (float32, error) {
+func (api *HWApi) GetPurgeState(accountHash string, purgeID string) (float32, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -60,7 +60,7 @@ func parsePugeList(p []interface{}) (*Purges, error) {
 //Purge Url
 //Usage Purge("a1b1c1d1",Purge{url:"1"},Purge{url:"2"}) or Purge("a1b1c1d1",[Purge{url:"1"},Purge{url:"2"}])
 //You can Purge{url:"1"} as "1"
-func (api *hwapi) Purge(accountHash string, purgeList ...interface{}) (*PurgeState, error) {
+func (api *HWApi) Purge(accountHash string, purgeList ...interface{}) (*PurgeState, error) {
 	pl, err := parsePugeList(purgeList)
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (api *hwapi) Purge(accountHash string, purgeList ...interface{}) (*PurgeSta
 //Prewarm Url
 //Usage Purge("a1b1c1d1",Purge{url:"1"},Purge{url:"2"}) or Purge("a1b1c1d1",[Purge{url:"1"},Purge{url:"2"}])
 //You can Purge{url:"1"} as "1"
-func (api *hwapi) WarmUpUrl(accountHash string, purgeList ...interface{}) (*PurgeState, error) {
+func (api *HWApi) WarmUpUrl(accountHash string, purgeList ...interface{}) (*PurgeState, error) {
 	pl, err := parsePugeList(purgeList)
 	if err != nil {
 		return nil, err

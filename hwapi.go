@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type hwapi struct {
+type HWApi struct {
 	hc          *http.Client
 	AuthToken   *AuthToken
 	authInfo    *authInfo
@@ -17,7 +17,7 @@ func init() {
 
 //Initiation HWApi
 //Default timeout is 30s and maxConns is 10
-func Init(opts ...http.Transport) *hwapi {
+func Init(opts ...http.Transport) *HWApi {
 	if opts[0].MaxIdleConns == 0 {
 		opts[0].MaxIdleConns = 10
 	}
@@ -33,7 +33,7 @@ func Init(opts ...http.Transport) *hwapi {
 		DisableCompression: opts[0].DisableCompression,
 	}
 	client := &http.Client{Transport: tr}
-	return &hwapi{
+	return &HWApi{
 		hc: client,
 	}
 }

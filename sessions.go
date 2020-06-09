@@ -6,7 +6,7 @@ import (
 )
 
 //Delete all sessions associated with a user
-func (api *hwapi) DeleteSessions(accountHash string, uid int) (bool, error) {
+func (api *HWApi) DeleteSessions(accountHash string, uid int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
@@ -20,7 +20,7 @@ func (api *hwapi) DeleteSessions(accountHash string, uid int) (bool, error) {
 }
 
 //Fetch all sessions associated with a user
-func (api *hwapi) GetSessions(accountHash string, uid int) (*AccessTokenList, error) {
+func (api *HWApi) GetSessions(accountHash string, uid int) (*AccessTokenList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -35,7 +35,7 @@ func (api *hwapi) GetSessions(accountHash string, uid int) (*AccessTokenList, er
 }
 
 //Delete a session associated with a user
-func (api *hwapi) DeleteSession(accountHash string, uid int, tokenID string) (bool, error) {
+func (api *HWApi) DeleteSession(accountHash string, uid int, tokenID string) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,

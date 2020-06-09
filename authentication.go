@@ -50,7 +50,7 @@ type AccessToken struct {
 }
 
 //Create an API token with infinite expiration
-func (api *hwapi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiTokenRequest) (*Authentication, error) {
+func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiTokenRequest) (*Authentication, error) {
 	if (accountHash == "" || uid == 0) && api.CurrentUser.AccountHash == "" {
 		return nil, errors.New("accountHash must supplied or use AboutMe to generate current user info")
 	}
@@ -78,7 +78,7 @@ func (api *hwapi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiT
 }
 
 //Fetch all tokens associated with this user
-func (api *hwapi) GetTokens(accountHash string, uid int) (*AccessTokenList, error) {
+func (api *HWApi) GetTokens(accountHash string, uid int) (*AccessTokenList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
@@ -93,7 +93,7 @@ func (api *hwapi) GetTokens(accountHash string, uid int) (*AccessTokenList, erro
 }
 
 //Delete token
-func (api *hwapi) DeleteToken(a string, uid int, tokenId int) (bool, error) {
+func (api *HWApi) DeleteToken(a string, uid int, tokenId int) (bool, error) {
 	_, e := api.Request(&Request{
 		Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens/%d", a, uid, tokenId),
 		Method: DELETE,
@@ -105,7 +105,7 @@ func (api *hwapi) DeleteToken(a string, uid int, tokenId int) (bool, error) {
 }
 
 //Authenticate user or refresh an access token
-func (api *hwapi) Auth(u string, p string) (*AuthToken, error) {
+func (api *HWApi) Auth(u string, p string) (*AuthToken, error) {
 	r, e := api.Request(&Request{
 		Method: POST,
 		Url:    "/auth/token",
@@ -123,12 +123,12 @@ func (api *hwapi) Auth(u string, p string) (*AuthToken, error) {
 
 //Set token
 //Check if token available, than set to AuthToken if available
-func (api *hwapi) SetToken(t string) {
+func (api *HWApi) SetToken(t string) {
 	api.AuthToken.AccessToken = t
 }
 
 //Use /api/v1/users/me to check accesstoken vaildation
-func (api *hwapi) checkToken() (bool, error) {
+func (api *HWApi) checkToken() (bool, error) {
 	_, e := api.AboutMe()
 	if e != nil {
 		return false, e
@@ -138,7 +138,7 @@ func (api *hwapi) checkToken() (bool, error) {
 
 //Automate refresh token when token is not available.
 //Note, this function had deprecated.
-func (api *hwapi) RefreshToken(refreshT ...string) (*AuthToken, error) {
+func (api *HWApi) RefreshToken(refreshT ...string) (*AuthToken, error) {
 	if api.AuthToken.RefreshToken == "" && refreshT == nil {
 		return nil, errors.New("RefreshToken not exists, try Auth() or provide refreshtoken")
 	}

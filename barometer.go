@@ -34,7 +34,7 @@ type BarometerResponse struct {
 //Get the list of traceroute responses for a given url
 //hostName is Address to test
 //pops is List of pops to test
-func (api *hwapi) BarometerTrace(hostName string, pops ...string) (*TraceRouteResponse, error) {
+func (api *HWApi) BarometerTrace(hostName string, pops ...string) (*TraceRouteResponse, error) {
 	pop := ""
 	for _, k := range pops {
 		pop += k + ","
@@ -61,7 +61,7 @@ func (api *hwapi) BarometerTrace(hostName string, pops ...string) (*TraceRouteRe
 //Get the list of HTTP responses for a given url
 //hostname is Url to test
 //pops is List of pops to test
-func (api *hwapi) BarometerRequest(hostName string, pops ...string) (*BarometerResponse, error) {
+func (api *HWApi) BarometerRequest(hostName string, pops ...string) (*BarometerResponse, error) {
 	pop := ""
 	for _, k := range pops {
 		pop += k + ","

@@ -21,7 +21,7 @@ type Notification struct {
 
 //Get notification list
 //Path /api/v1/accounts/{account_hash}/notifications
-func (api *hwapi) GetNotifications(accountHash string, includeMessage bool, startDate string, endDate string) (*NotificationList, error) {
+func (api *HWApi) GetNotifications(accountHash string, includeMessage bool, startDate string, endDate string) (*NotificationList, error) {
 	im := "false"
 	if includeMessage {
 		im = "true"
@@ -47,7 +47,7 @@ func (api *hwapi) GetNotifications(accountHash string, includeMessage bool, star
 //Get notification
 //Path /api/v1/accounts/{account_hash}/notifications/{notification_id}
 //Get notification
-func (api *hwapi) GetNotification(accountHash string, notificationID int) (*Notification, error) {
+func (api *HWApi) GetNotification(accountHash string, notificationID int) (*Notification, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,

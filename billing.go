@@ -16,7 +16,7 @@ type BRegion struct {
 
 //Returns the list of billing regions in the CDN.
 //Path /api/v1/billingRegions
-func (api *hwapi) GetBillingRegions() (*BillingRegionList, error) {
+func (api *HWApi) GetBillingRegions() (*BillingRegionList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
