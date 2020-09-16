@@ -171,7 +171,7 @@ func (api *HWApi) GetAnalytics(dt string, accountHash string, query interface{})
 	qm := make(map[string]string)
 	switch q := query.(type) {
 	case *AnalyticsQuery:
-		if q.Granularity == "" {
+		if q.Granularity == "" && dt != "storage" {
 			q.Granularity = "PT5M"
 		}
 		if q.Platforms == "" {
@@ -186,7 +186,9 @@ func (api *HWApi) GetAnalytics(dt string, accountHash string, query interface{})
 			return nil, e2
 		}
 	case map[string]string:
-		if q["Granularity"] == "" {
+		if dt == "storage" {
+			q["Granularity"] = ""
+		} else if q["Granularity"] == "" {
 			q["Granularity"] = "PT5M"
 		}
 		if q["Platforms"] == "" {

@@ -78,16 +78,37 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 		}
 	}
 	//parse request query strings
-	queryString := ""
+	queryString := []string{}
 	for qk, qv := range req.Query {
-		queryString += qk + "=" + qv + "&"
-	}
-	if queryString != "" {
-		if strings.Index(req.Url, "?") < 0 {
-			req.Url += "?" + queryString
-		} else {
-			req.Url += "&" + queryString
+		switch strings.ToLower(qk) {
+		// used for analytics
+		case "groupby":
+			queryString = append(queryString, "groupBy="+qv)
+		case "startdate":
+			queryString = append(queryString, "startDate="+qv)
+		case "enddate":
+			queryString = append(queryString, "endDate="+qv)
+		case "billingregions":
+			queryString = append(queryString, "billingRegions="+qv)
+		case "statuscodes":
+			queryString = append(queryString, "statusCodes="+qv)
+		case "statuscategories":
+			queryString = append(queryString, "statusCategories="+qv)
+		case "includemessage":
+			queryString = append(queryString, "includeMessage="+qv)
+		case "maxresults":
+			queryString = append(queryString, "maxResults="+qv)
+		default:
+			queryString = append(queryString, strings.ToLower(qk)+"="+qv)
 		}
+	}
+	if len(queryString) != 0 {
+		if strings.Index(req.Url, "?") < 0 {
+			req.Url += "?"
+		} else {
+			req.Url += "&"
+		}
+		req.Url += strings.Join(uniqueSlice(queryString), "&")
 	}
 	//parse request headers
 	r, ee := http.NewRequest(req.Method, req.Url, buf)
@@ -133,6 +154,7 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 	if ioerr != nil {
 		return nil, errors.New("parse response failed")
 	}
+
 	if rep.StatusCode > 300 || rep.StatusCode < 200 {
 		//tre parse error info in response
 		errorInfo := &ErrorResponse{}
