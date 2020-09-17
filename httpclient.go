@@ -145,7 +145,7 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 	req.Header.Set("X-Application", "GO-HWApi")
 	req.Header.Set("X-Application-Id", "GO-HWApi")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1")
-	rep, err := api.hc.Do(req)
+	rep, err := api.hc.RoundTrip(req)
 	if err != nil {
 		return nil, err
 	}

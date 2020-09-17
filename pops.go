@@ -11,11 +11,16 @@ type POPs struct {
 
 //A representation of a point of presence, also called a data center
 type POP struct {
-	ID     int    `json:"id"`     //The id of the pop
-	Code   string `json:"code"`   //The code use to refer to the POP
-	Name   string `json:"name"`   //The friendly name of the POP
-	Group  string `json:"group"`  //group
-	Region string `json:"region"` //region
+	ID         int     `json:"id"`     //The id of the pop
+	Code       string  `json:"code"`   //The code use to refer to the POP
+	Name       string  `json:"name"`   //The friendly name of the POP
+	Group      string  `json:"group"`  //group
+	Region     string  `json:"region"` //region
+	Country    string  `json:"country,omitempty"`
+	Latitude   float32 `json:"latitude,omitempty"`
+	Scannable  bool    `json:"scannable,omitempty"`
+	Longitude  float32 `json:"longitude,omitempty"`
+	Analyzable bool    `json:"analyzable,omitempty"`
 }
 
 //IPs
