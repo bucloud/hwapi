@@ -120,16 +120,6 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 	}
 	//Call fetch
 	return api.Fetch(r)
-	// if responseInterface == nil {
-	// 	return api.Fetch(r)
-	// } else {
-	// 	res, err := api.Fetch(r)
-	// 	if err != nil {
-	// 		return res, err
-	// 	}
-	// 	//Convert to struct
-	// 	return responseInterface[0], json.Unmarshal(res.body, responseInterface[0])
-	// }
 }
 
 //HWApi fetch function,add auth header and application/json header

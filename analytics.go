@@ -15,7 +15,7 @@ type Series struct {
 	Type    string      `json:"type"`    //type
 	Key     string      `json:"key"`     //Key
 	Metrics []string    `json:"metrics"` //Metrics
-	Data    [][]float32 `json:"data"`    //Data
+	Data    [][]float64 `json:"data"`    //Data
 }
 
 // A user enters a start time and end time (the timeframe) for transfer data. When the API returns the transfer data, the timeframe of the answer may not exactly match the timeframe of the request. This happens because the API returns data in terms of time buckets defined by the requested granularity:
@@ -168,40 +168,12 @@ func (api *HWApi) GetTransferData(accountHash string, q *AnalyticsQuery) (*Analy
 
 //Get analytics Data wrap
 func (api *HWApi) GetAnalytics(dt string, accountHash string, query interface{}) (*Analytics, error) {
-	qm := make(map[string]string)
-	switch q := query.(type) {
-	case *AnalyticsQuery:
-		if q.Granularity == "" && dt != "storage" {
-			q.Granularity = "PT5M"
-		}
-		if q.Platforms == "" {
-			q.Platforms = "DELIVERY"
-		}
-		ji, err := json.Marshal(q)
-		if err != nil {
-			return nil, err
-		}
-		e2 := json.Unmarshal(ji, &qm)
-		if e2 != nil {
-			return nil, e2
-		}
-	case map[string]string:
-		if dt == "storage" {
-			q["Granularity"] = ""
-		} else if q["Granularity"] == "" {
-			q["Granularity"] = "PT5M"
-		}
-		if q["Platforms"] == "" {
-			q["Platforms"] = "DELIVERY"
-		}
-		qm = q
-	}
 
 	r, e := api.Request(
 		&Request{
 			Method: GET,
 			Url:    fmt.Sprintf("/api/v1/accounts/%s/analytics/%s", accountHash, dt),
-			Query:  qm,
+			Query:  query.(map[string]string),
 		},
 	)
 	if e != nil {
