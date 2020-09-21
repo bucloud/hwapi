@@ -17,6 +17,7 @@ type CloneHost struct {
 }
 
 type Host struct {
+	AccountHash string     `json:"account_hash,omitempty"` // leave blank field
 	Name        string     `json:"name"`
 	HashCode    string     `json:"hashCode"`
 	Type        string     `json:"type"`
@@ -61,7 +62,7 @@ func (api *HWApi) GetHosts(accountHash string) (*HostList, error) {
 
 //Clone an existing delivery host
 //Path /api/v1/accounts/{account_hash}/hosts/{host_hash}
-func (api *HWApi) Get(accountHash string, hostHash string, cloneHost CloneHost) (*Host, error) {
+func (api *HWApi) Clone(accountHash string, hostHash string, cloneHost CloneHost) (*Host, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
@@ -122,5 +123,21 @@ func (api *HWApi) UpdateHost(accountHash string, hostHash string, host *Host) (*
 		return nil, e
 	}
 	al := &Host{}
+	return al, json.Unmarshal(r.body, al)
+}
+
+// Graph return simple configure graph
+//GET /api/v1/accounts/{account_hash}/graph
+func (api *HWApi) Graph(accountHash string) (*map[string]interface{}, error) {
+	r, e := api.Request(
+		&Request{
+			Method: GET,
+			Url:    fmt.Sprintf("/api/v1/accounts/%s/graph", accountHash),
+		},
+	)
+	if e != nil {
+		return nil, e
+	}
+	al := &map[string]interface{}{}
 	return al, json.Unmarshal(r.body, al)
 }

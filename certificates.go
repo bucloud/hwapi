@@ -7,6 +7,7 @@ import (
 
 //A certificate used for secure delivery
 type Certificate struct {
+	AccountHash            string                          `json:"account_hash,omitempty"`
 	ID                     int                             `json:"id"`             //The certificate's id
 	CommonName             string                          `json:"commonName"`     //Primary hostname for which this certificate can serve traffic
 	Certificate            string                          `json:"certificate"`    //The text of the x.509 certificate itself
@@ -33,8 +34,8 @@ type CertificateInformation struct {
 	SerialNumberHex  string            `json:"serialNumberHex"`
 	ValidFrom        string            `json:"validFrom"`
 	ValidTo          string            `json:"validTo"`
-	ValidFrom_time_t int               `json:"validFrom_time_t"`
-	ValidTo_time_t   int               `json:"validTo_time_t"`
+	ValidFromTimeT   int               `json:"validFrom_time_t"`
+	ValidToTimeT     int               `json:"validTo_time_t"`
 	SignatureTypeSN  string            `json:"signatureTypeSN"`
 	SignatureTypeLN  string            `json:"signatureTypeLN"`
 	SignatureTypeNID int               `json:"signatureTypeNID"`
@@ -90,11 +91,11 @@ func (api *HWApi) UploadCertificate(accountHash string, certificate *Certificate
 
 //Delete a certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *HWApi) DeleteCertificate(accountHash string, cert_id int) (bool, error) {
+func (api *HWApi) DeleteCertificate(accountHash string, certID int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, cert_id),
+			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, certID),
 		},
 	)
 	if e != nil {
@@ -105,11 +106,11 @@ func (api *HWApi) DeleteCertificate(accountHash string, cert_id int) (bool, erro
 
 //Get a certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *HWApi) GetCertificate(accountHash string, cert_id int) (*Certificate, error) {
+func (api *HWApi) GetCertificate(accountHash string, certID int) (*Certificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, cert_id),
+			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, certID),
 		},
 	)
 	if e != nil {
@@ -121,11 +122,11 @@ func (api *HWApi) GetCertificate(accountHash string, cert_id int) (*Certificate,
 
 //Update a certificate (useful for expired certs)
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}
-func (api *HWApi) UpdateCertificate(accountHash string, cert_id int) (*Certificate, error) {
+func (api *HWApi) UpdateCertificate(accountHash string, certID int) (*Certificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, cert_id),
+			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d", accountHash, certID),
 		},
 	)
 	if e != nil {
@@ -137,11 +138,11 @@ func (api *HWApi) UpdateCertificate(accountHash string, cert_id int) (*Certifica
 
 //Get Hosts for Certificate
 //Path /api/v1/accounts/{account_hash}/certificates/{certificate_id}/hosts
-func (api *HWApi) GetHostsForCertificate(accountHash string, cert_id int) (*HostsForCertificate, error) {
+func (api *HWApi) GetHostsForCertificate(accountHash string, certID int) (*HostsForCertificate, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d/hosts", accountHash, cert_id),
+			Url:    fmt.Sprintf("/api/v1/accounts/%s/certificates/%d/hosts", accountHash, certID),
 		},
 	)
 	if e != nil {
