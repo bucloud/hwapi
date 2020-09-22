@@ -25,25 +25,28 @@ type Certificate struct {
 }
 
 type CertificateInformation struct {
-	Name             string            `json:"name"`
-	Subject          map[string]string `json:"subject"`
-	Hash             string            `json:"hash"`
-	Issuer           map[string]string `json:"issuer"`
-	Version          int               `json:"version"`
-	SerialNumber     string            `json:"serialNumber"`
-	SerialNumberHex  string            `json:"serialNumberHex"`
-	ValidFrom        string            `json:"validFrom"`
-	ValidTo          string            `json:"validTo"`
-	ValidFromTimeT   int               `json:"validFrom_time_t"`
-	ValidToTimeT     int               `json:"validTo_time_t"`
-	SignatureTypeSN  string            `json:"signatureTypeSN"`
-	SignatureTypeLN  string            `json:"signatureTypeLN"`
-	SignatureTypeNID int               `json:"signatureTypeNID"`
-	Extensions       map[string]string `json:"extensions"`
+	Name string `json:"name"`
+
+	// DC would contains array strings in some suitaions
+	// Use interface{} instead of string
+	Subject          map[string]interface{} `json:"subject"`
+	Hash             string                 `json:"hash"`
+	Issuer           map[string]string      `json:"issuer"`
+	Version          int                    `json:"version"`
+	SerialNumber     string                 `json:"serialNumber"`
+	SerialNumberHex  string                 `json:"serialNumberHex"`
+	ValidFrom        string                 `json:"validFrom"`
+	ValidTo          string                 `json:"validTo"`
+	ValidFromTimeT   int                    `json:"validFrom_time_t"`
+	ValidToTimeT     int                    `json:"validTo_time_t"`
+	SignatureTypeSN  string                 `json:"signatureTypeSN"`
+	SignatureTypeLN  string                 `json:"signatureTypeLN"`
+	SignatureTypeNID int                    `json:"signatureTypeNID"`
+	Extensions       map[string]string      `json:"extensions"`
 }
 
 type Requester struct {
-	ID        string `json:"id"`
+	ID        int    `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`

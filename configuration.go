@@ -2238,6 +2238,20 @@ type OriginPullShield struct {
 
 }
 
+// OriginPullHost doesn't included in configuration DOC
+// Just contains primary&secondary configure ID
+type OriginPullHost struct {
+	ID int `json:"id,omitempty"` // configure ID
+
+	// Primary configure ID
+	// This field include number by default, but set to interface{} in order to relace with origin struct
+	Primary   interface{} `json:"primary,omitempty"` // This field include number by default, but set to
+	Secondary interface{} `json:"secondary,omitempty"`
+
+	// Default path used for origin pull request
+	Path string `json:"path,omitempty"`
+}
+
 // The CDN can use a round-robin algorithm when selecting the IP address returned by the Domain Name Server  for the origin hostname specified. By default, the CDN utilizes its application level DNS caching where a single IP address is used until the next DNS refresh.\n//
 // groupAble OR
 // allowedScope PRODUCT
@@ -3872,7 +3886,8 @@ type HostName struct {
 
 //Configuration graph
 type Graph struct {
-	Hosts map[string]*HostAttributes `json:"hosts"` //Hosts
+	Hosts   map[string]*HostAttributes `json:"hosts"` //Hosts
+	Origins []*OriginAttributes        `json:"origins,omitempty"`
 }
 
 //Host attributes
@@ -3881,10 +3896,19 @@ type HostAttributes struct {
 	Scopes map[string]*GraphScopes `json:"scopes"` //scopes
 }
 
+// OriginAttributes used by Graph
+type OriginAttributes struct {
+	ID   string `json:"id,omitempty"`   // origin ID
+	Name string `json:"name,omitempty"` // origin name
+	URL  string `json:"url,omitempty"`  // origin hostname
+	Type string `json:"type,omitempty"` // origin type
+}
+
+// GraphScopes contains hostnames&origins
 type GraphScopes struct {
-	Path      string    `json:"path"` // /cds
-	Hostnames []string  `json:"hostnames"`
-	Origins   []*Origin `json:"origins"`
+	Path      string              `json:"path"` // /cds
+	Hostnames []string            `json:"hostnames"`
+	Origins   []*OriginAttributes `json:"origins"`
 }
 
 //scopes
@@ -3915,118 +3939,119 @@ type OriginInfo struct {
 
 //A container for configuration on a scope
 type Configuration struct {
-	ID                             string                         `json:"id"`    //For updates, this is the configuration receipt id that can be used to poll for status
-	Scope                          Scope                          `json:"scope"` //The scope at which this configuration is set
-	AccessLogger                   AccessLogger                   `json:"accessLogger,omitempty"`
-	AccessLogs                     AccessLogs                     `json:"accessLogs,omitempty"`
-	AccessLogIpObfuscation         AccessLogIpObfuscation         `json:"accessLogIpObfuscation,omitempty"`
-	AccessLogsConfig               AccessLogsConfig               `json:"accessLogsConfig,omitempty"`
-	HostnameReporting              HostnameReporting              `json:"hostnameReporting,omitempty"`
-	NrtReporting                   NrtReporting                   `json:"nrtReporting,omitempty"`
-	OriginPullLogs                 OriginPullLogs                 `json:"originPullLogs,omitempty"`
-	OriginPullLogsConfig           OriginPullLogsConfig           `json:"originPullLogsConfig,omitempty"`
-	ReceiptLogs                    ReceiptLogs                    `json:"receiptLogs,omitempty"`
-	ReceiptLogsConfig              ReceiptLogsConfig              `json:"receiptLogsConfig,omitempty"`
-	RequestReceipt                 []*RequestReceipt              `json:"requestReceipt,omitempty"`
-	RequestReceiptReportPercentage RequestReceiptReportPercentage `json:"requestReceiptReportPercentage,omitempty"`
-	AwsSignedS3PostV4              []*AwsSignedS3PostV4           `json:"awsSignedS3PostV4,omitempty"`
-	AuthACL                        []*AuthACL                     `json:"authACL,omitempty"`
-	AuthGeo                        []*AuthGeo                     `json:"authGeo,omitempty"`
-	AuthHttpBasic                  AuthHttpBasic                  `json:"authHttpBasic,omitempty"`
-	AuthReferer                    AuthReferer                    `json:"authReferer,omitempty"`
-	AuthSignUrlsInPlaylist         AuthSignUrlsInPlaylist         `json:"authSignUrlsInPlaylist,omitempty"`
-	AuthUrlSign                    []*AuthUrlSign                 `json:"authUrlSign,omitempty"`
-	AuthUrlSignAliCloudA           []*AuthUrlSignAliCloudA        `json:"authUrlSignAliCloudA,omitempty"`
-	AuthUrlSignAliCloudB           []*AuthUrlSignAliCloudB        `json:"authUrlSignAliCloudB,omitempty"`
-	AuthUrlSignAliCloudC           []*AuthUrlSignAliCloudC        `json:"authUrlSignAliCloudC,omitempty"`
-	AuthUrlSignHmacTlu             []*AuthUrlSignHmacTlu          `json:"authUrlSignHmacTlu,omitempty"`
-	AuthUrlSignIq                  []*AuthUrlSignIq               `json:"authUrlSignIq,omitempty"`
-	AuthUrlAsymmetricSignTlu       []*AuthUrlAsymmetricSignTlu    `json:"authUrlAsymmetricSignTlu,omitempty"`
-	AuthUrlSignL3                  []*AuthUrlSignL3               `json:"authUrlSignL3,omitempty"`
-	AuthUrlSignAKv1                []*AuthUrlSignAKv1             `json:"authUrlSignAKv1,omitempty"`
-	AuthUrlSignAKv2                []*AuthUrlSignAKv2             `json:"authUrlSignAKv2,omitempty"`
-	AuthUrlSignLMV                 []*AuthUrlSignLMV              `json:"authUrlSignLMV,omitempty"`
-	AuthVhostLockout               AuthVhostLockout               `json:"authVhostLockout,omitempty"`
-	BandWidthLimit                 BandWidthLimit                 `json:"bandWidthLimit,omitempty"`
-	BandwidthRateLimit             BandwidthRateLimit             `json:"bandwidthRateLimit,omitempty"`
-	BandWidthRateLimitUnits        BandWidthRateLimitUnits        `json:"bandWidthRateLimitUnits,omitempty"`
-	ClientAccess                   ClientAccess                   `json:"clientAccess,omitempty"`
-	Compression                    Compression                    `json:"compression,omitempty"`
-	ContentDispositionByURL        ContentDispositionByURL        `json:"contentDispositionByURL,omitempty"`
-	ContentDispositionByHeader     []*ContentDispositionByHeader  `json:"contentDispositionByHeader,omitempty"`
-	CookieBehavior                 []*CookieBehavior              `json:"cookieBehavior,omitempty"`
-	CrossDomain                    CrossDomain                    `json:"crossDomain,omitempty"`
-	CustomMimeType                 []*CustomMimeType              `json:"customMimeType,omitempty"`
-	DnsIpv6                        DnsIpv6                        `json:"dnsIpv6,omitempty"`
-	DnsOverride                    []*DnsOverride                 `json:"dnsOverride,omitempty"`
-	DynamicCacheRule               []*DynamicCacheRule            `json:"dynamicCacheRule,omitempty"`
-	Flv                            Flv                            `json:"flv,omitempty"`
-	FlvPseudoStreaming             FlvPseudoStreaming             `json:"flvPseudoStreaming,omitempty"`
-	General                        General                        `json:"general,omitempty"`
-	HttpMethods                    HttpMethods                    `json:"httpMethods,omitempty"`
-	LegacyXdomain                  LegacyXdomain                  `json:"legacyXdomain,omitempty"`
-	LiveStreaming                  []*LiveStreaming               `json:"liveStreaming,omitempty"`
-	PreserveRedirectHost           PreserveRedirectHost           `json:"preserveRedirectHost,omitempty"`
-	QueryStrParam                  QueryStrParam                  `json:"queryStrParam,omitempty"`
-	RedirectExceptions             RedirectExceptions             `json:"redirectExceptions,omitempty"`
-	RedirectMappings               []*RedirectMappings            `json:"redirectMappings,omitempty"`
-	ResponseHeader                 ResponseHeader                 `json:"responseHeader,omitempty"`
-	RobotsTxt                      []*RobotsTxt                   `json:"robotsTxt,omitempty"`
-	StaticHeader                   []*StaticHeader                `json:"staticHeader,omitempty"`
-	StreamChunkedEncodingResponse  StreamChunkedEncodingResponse  `json:"streamChunkedEncodingResponse,omitempty"`
-	TimePseudoStreaming            TimePseudoStreaming            `json:"timePseudoStreaming,omitempty"`
-	Http2Support                   Http2Support                   `json:"http2Support,omitempty"`
-	OcspParsing                    []*OcspParsing                 `json:"ocspParsing,omitempty"`
-	Hostname                       []*Hostname                    `json:"hostname,omitempty"`
-	BlockingOriginPullMode         BlockingOriginPullMode         `json:"blockingOriginPullMode,omitempty"`
-	CustomHeader                   CustomHeader                   `json:"customHeader,omitempty"`
-	DynamicOrigin                  DynamicOrigin                  `json:"dynamicOrigin,omitempty"`
-	FailSafeOriginPull             FailSafeOriginPull             `json:"failSafeOriginPull,omitempty"`
-	FarAheadRangeProxy             FarAheadRangeProxy             `json:"farAheadRangeProxy,omitempty"`
-	FileSegmentation               FileSegmentation               `json:"fileSegmentation,omitempty"`
-	VaryHeaderField                VaryHeaderField                `json:"varyHeaderField,omitempty"`
-	GzipOriginPull                 GzipOriginPull                 `json:"gzipOriginPull,omitempty"`
-	OriginPersistentConnections    OriginPersistentConnections    `json:"originPersistentConnections,omitempty"`
-	OriginPull                     OriginPull                     `json:"originPull,omitempty"`
-	OriginPullProtocol             OriginPullProtocol             `json:"originPullProtocol,omitempty"`
-	OriginPullPops                 []*OriginPullPops              `json:"originPullPops,omitempty"`
-	OriginPullShield               OriginPullShield               `json:"originPullShield,omitempty"`
-	OriginRoundRobinDns            []*OriginRoundRobinDns         `json:"originRoundRobinDns,omitempty"`
-	AwsSignedOriginPullV4          []*AwsSignedOriginPullV4       `json:"awsSignedOriginPullV4,omitempty"`
-	UploadLimit                    []*UploadLimit                 `json:"uploadLimit,omitempty"`
-	Waf                            []*Waf                         `json:"waf,omitempty"`
-	WafClustersOverride            []*WafClustersOverride         `json:"wafClustersOverride,omitempty"`
-	XForwardedForBehavior          XForwardedForBehavior          `json:"xForwardedForBehavior,omitempty"`
-	WebSocket                      []*WebSocket                   `json:"webSocket,omitempty"`
-	CacheControl                   []*CacheControl                `json:"cacheControl,omitempty"`
-	CacheKeyModification           CacheKeyModification           `json:"cacheKeyModification,omitempty"`
-	DynamicContent                 []*DynamicContent              `json:"dynamicContent,omitempty"`
-	OriginPullCacheExtension       OriginPullCacheExtension       `json:"originPullCacheExtension,omitempty"`
-	OriginPullPolicy               []*OriginPullPolicy            `json:"originPullPolicy,omitempty"`
-	ClientRequestQueue             ClientRequestQueue             `json:"clientRequestQueue,omitempty"`
-	ClientResponseQueue            ClientResponseQueue            `json:"clientResponseQueue,omitempty"`
-	ClientKeepAlive                []*ClientKeepAlive             `json:"clientKeepAlive,omitempty"`
-	ConsistentHashing              []*ConsistentHashing           `json:"consistentHashing,omitempty"`
-	H2proxyCaching                 H2proxyCaching                 `json:"h2proxyCaching,omitempty"`
-	Customer                       Customer                       `json:"customer,omitempty"`
-	DeviceBasedDynamicContent      DeviceBasedDynamicContent      `json:"deviceBasedDynamicContent,omitempty"`
-	HashType                       HashType                       `json:"hashType,omitempty"`
-	InternalError                  InternalError                  `json:"internalError,omitempty"`
-	LanguageRedirect               []*LanguageRedirect            `json:"languageRedirect,omitempty"`
-	MidTierCaching                 []*MidTierCaching              `json:"midTierCaching,omitempty"`
-	OriginRequestQueue             OriginRequestQueue             `json:"originRequestQueue,omitempty"`
-	OriginResponseQueue            OriginResponseQueue            `json:"originResponseQueue,omitempty"`
-	PathModification               []*PathModification            `json:"pathModification,omitempty"`
-	ScriptNegCaching               ScriptNegCaching               `json:"scriptNegCaching,omitempty"`
-	ServerlessScripting            []*ServerlessScripting         `json:"serverlessScripting,omitempty"`
-	TossbackBypass                 TossbackBypass                 `json:"tossbackBypass,omitempty"`
-	CloseHalfOpenConnections       CloseHalfOpenConnections       `json:"closeHalfOpenConnections,omitempty"`
-	TossbackAlways                 TossbackAlways                 `json:"tossbackAlways,omitempty"`
-	Rti                            []*Rti                         `json:"rti,omitempty"`
-	ClientRequestModification      []*ClientRequestModification   `json:"clientRequestModification,omitempty"`
-	ClientResponseModification     []*ClientResponseModification  `json:"clientResponseModification,omitempty"`
-	OriginRequestModification      []*OriginRequestModification   `json:"originRequestModification,omitempty"`
-	OriginResponseModification     []*OriginResponseModification  `json:"originResponseModification,omitempty"`
+	ID                             string                          `json:"id"`    //For updates, this is the configuration receipt id that can be used to poll for status
+	Scope                          Scope                           `json:"scope"` //The scope at which this configuration is set
+	AccessLogger                   *AccessLogger                   `json:"accessLogger,omitempty"`
+	AccessLogs                     *AccessLogs                     `json:"accessLogs,omitempty"`
+	AccessLogIpObfuscation         *AccessLogIpObfuscation         `json:"accessLogIpObfuscation,omitempty"`
+	AccessLogsConfig               *AccessLogsConfig               `json:"accessLogsConfig,omitempty"`
+	HostnameReporting              *HostnameReporting              `json:"hostnameReporting,omitempty"`
+	NrtReporting                   *NrtReporting                   `json:"nrtReporting,omitempty"`
+	OriginPullLogs                 *OriginPullLogs                 `json:"originPullLogs,omitempty"`
+	OriginPullLogsConfig           *OriginPullLogsConfig           `json:"originPullLogsConfig,omitempty"`
+	ReceiptLogs                    *ReceiptLogs                    `json:"receiptLogs,omitempty"`
+	ReceiptLogsConfig              *ReceiptLogsConfig              `json:"receiptLogsConfig,omitempty"`
+	RequestReceipt                 []*RequestReceipt               `json:"requestReceipt,omitempty"`
+	RequestReceiptReportPercentage *RequestReceiptReportPercentage `json:"requestReceiptReportPercentage,omitempty"`
+	AwsSignedS3PostV4              []*AwsSignedS3PostV4            `json:"awsSignedS3PostV4,omitempty"`
+	AuthACL                        []*AuthACL                      `json:"authACL,omitempty"`
+	AuthGeo                        []*AuthGeo                      `json:"authGeo,omitempty"`
+	AuthHttpBasic                  *AuthHttpBasic                  `json:"authHttpBasic,omitempty"`
+	AuthReferer                    *AuthReferer                    `json:"authReferer,omitempty"`
+	AuthSignUrlsInPlaylist         *AuthSignUrlsInPlaylist         `json:"authSignUrlsInPlaylist,omitempty"`
+	AuthUrlSign                    []*AuthUrlSign                  `json:"authUrlSign,omitempty"`
+	AuthUrlSignAliCloudA           []*AuthUrlSignAliCloudA         `json:"authUrlSignAliCloudA,omitempty"`
+	AuthUrlSignAliCloudB           []*AuthUrlSignAliCloudB         `json:"authUrlSignAliCloudB,omitempty"`
+	AuthUrlSignAliCloudC           []*AuthUrlSignAliCloudC         `json:"authUrlSignAliCloudC,omitempty"`
+	AuthUrlSignHmacTlu             []*AuthUrlSignHmacTlu           `json:"authUrlSignHmacTlu,omitempty"`
+	AuthUrlSignIq                  []*AuthUrlSignIq                `json:"authUrlSignIq,omitempty"`
+	AuthUrlAsymmetricSignTlu       []*AuthUrlAsymmetricSignTlu     `json:"authUrlAsymmetricSignTlu,omitempty"`
+	AuthUrlSignL3                  []*AuthUrlSignL3                `json:"authUrlSignL3,omitempty"`
+	AuthUrlSignAKv1                []*AuthUrlSignAKv1              `json:"authUrlSignAKv1,omitempty"`
+	AuthUrlSignAKv2                []*AuthUrlSignAKv2              `json:"authUrlSignAKv2,omitempty"`
+	AuthUrlSignLMV                 []*AuthUrlSignLMV               `json:"authUrlSignLMV,omitempty"`
+	AuthVhostLockout               *AuthVhostLockout               `json:"authVhostLockout,omitempty"`
+	BandWidthLimit                 *BandWidthLimit                 `json:"bandWidthLimit,omitempty"`
+	BandwidthRateLimit             *BandwidthRateLimit             `json:"bandwidthRateLimit,omitempty"`
+	BandWidthRateLimitUnits        *BandWidthRateLimitUnits        `json:"bandWidthRateLimitUnits,omitempty"`
+	ClientAccess                   *ClientAccess                   `json:"clientAccess,omitempty"`
+	Compression                    *Compression                    `json:"compression,omitempty"`
+	ContentDispositionByURL        *ContentDispositionByURL        `json:"contentDispositionByURL,omitempty"`
+	ContentDispositionByHeader     []*ContentDispositionByHeader   `json:"contentDispositionByHeader,omitempty"`
+	CookieBehavior                 []*CookieBehavior               `json:"cookieBehavior,omitempty"`
+	CrossDomain                    *CrossDomain                    `json:"crossDomain,omitempty"`
+	CustomMimeType                 []*CustomMimeType               `json:"customMimeType,omitempty"`
+	DNSIpv6                        *DnsIpv6                        `json:"dnsIpv6,omitempty"`
+	DNSOverride                    []*DnsOverride                  `json:"dnsOverride,omitempty"`
+	DynamicCacheRule               []*DynamicCacheRule             `json:"dynamicCacheRule,omitempty"`
+	Flv                            *Flv                            `json:"flv,omitempty"`
+	FlvPseudoStreaming             *FlvPseudoStreaming             `json:"flvPseudoStreaming,omitempty"`
+	General                        *General                        `json:"general,omitempty"`
+	HTTPMethods                    *HttpMethods                    `json:"httpMethods,omitempty"`
+	LegacyXdomain                  *LegacyXdomain                  `json:"legacyXdomain,omitempty"`
+	LiveStreaming                  []*LiveStreaming                `json:"liveStreaming,omitempty"`
+	PreserveRedirectHost           *PreserveRedirectHost           `json:"preserveRedirectHost,omitempty"`
+	QueryStrParam                  *QueryStrParam                  `json:"queryStrParam,omitempty"`
+	RedirectExceptions             *RedirectExceptions             `json:"redirectExceptions,omitempty"`
+	RedirectMappings               []*RedirectMappings             `json:"redirectMappings,omitempty"`
+	ResponseHeader                 *ResponseHeader                 `json:"responseHeader,omitempty"`
+	RobotsTxt                      []*RobotsTxt                    `json:"robotsTxt,omitempty"`
+	StaticHeader                   []*StaticHeader                 `json:"staticHeader,omitempty"`
+	StreamChunkedEncodingResponse  *StreamChunkedEncodingResponse  `json:"streamChunkedEncodingResponse,omitempty"`
+	TimePseudoStreaming            *TimePseudoStreaming            `json:"timePseudoStreaming,omitempty"`
+	HTTP2Support                   *Http2Support                   `json:"http2Support,omitempty"`
+	OcspParsing                    []*OcspParsing                  `json:"ocspParsing,omitempty"`
+	Hostname                       []*Hostname                     `json:"hostname,omitempty"`
+	BlockingOriginPullMode         *BlockingOriginPullMode         `json:"blockingOriginPullMode,omitempty"`
+	CustomHeader                   *CustomHeader                   `json:"customHeader,omitempty"`
+	DynamicOrigin                  *DynamicOrigin                  `json:"dynamicOrigin,omitempty"`
+	FailSafeOriginPull             *FailSafeOriginPull             `json:"failSafeOriginPull,omitempty"`
+	FarAheadRangeProxy             *FarAheadRangeProxy             `json:"farAheadRangeProxy,omitempty"`
+	FileSegmentation               *FileSegmentation               `json:"fileSegmentation,omitempty"`
+	VaryHeaderField                *VaryHeaderField                `json:"varyHeaderField,omitempty"`
+	GzipOriginPull                 *GzipOriginPull                 `json:"gzipOriginPull,omitempty"`
+	OriginPersistentConnections    *OriginPersistentConnections    `json:"originPersistentConnections,omitempty"`
+	OriginPull                     *OriginPull                     `json:"originPull,omitempty"`
+	OriginPullProtocol             *OriginPullProtocol             `json:"originPullProtocol,omitempty"`
+	OriginPullPops                 []*OriginPullPops               `json:"originPullPops,omitempty"`
+	OriginPullShield               *OriginPullShield               `json:"originPullShield,omitempty"`
+	OriginPullHost                 *OriginPullHost                 `json:"originPullHost,omitempty"`
+	OriginRoundRobinDNS            []*OriginRoundRobinDns          `json:"originRoundRobinDns,omitempty"`
+	AwsSignedOriginPullV4          []*AwsSignedOriginPullV4        `json:"awsSignedOriginPullV4,omitempty"`
+	UploadLimit                    []*UploadLimit                  `json:"uploadLimit,omitempty"`
+	Waf                            []*Waf                          `json:"waf,omitempty"`
+	WafClustersOverride            []*WafClustersOverride          `json:"wafClustersOverride,omitempty"`
+	XForwardedForBehavior          *XForwardedForBehavior          `json:"xForwardedForBehavior,omitempty"`
+	WebSocket                      []*WebSocket                    `json:"webSocket,omitempty"`
+	CacheControl                   []*CacheControl                 `json:"cacheControl,omitempty"`
+	CacheKeyModification           *CacheKeyModification           `json:"cacheKeyModification,omitempty"`
+	DynamicContent                 []*DynamicContent               `json:"dynamicContent,omitempty"`
+	OriginPullCacheExtension       *OriginPullCacheExtension       `json:"originPullCacheExtension,omitempty"`
+	OriginPullPolicy               []*OriginPullPolicy             `json:"originPullPolicy,omitempty"`
+	ClientRequestQueue             *ClientRequestQueue             `json:"clientRequestQueue,omitempty"`
+	ClientResponseQueue            *ClientResponseQueue            `json:"clientResponseQueue,omitempty"`
+	ClientKeepAlive                []*ClientKeepAlive              `json:"clientKeepAlive,omitempty"`
+	ConsistentHashing              []*ConsistentHashing            `json:"consistentHashing,omitempty"`
+	H2proxyCaching                 *H2proxyCaching                 `json:"h2proxyCaching,omitempty"`
+	Customer                       *Customer                       `json:"customer,omitempty"`
+	DeviceBasedDynamicContent      *DeviceBasedDynamicContent      `json:"deviceBasedDynamicContent,omitempty"`
+	HashType                       *HashType                       `json:"hashType,omitempty"`
+	InternalError                  *InternalError                  `json:"internalError,omitempty"`
+	LanguageRedirect               []*LanguageRedirect             `json:"languageRedirect,omitempty"`
+	MidTierCaching                 []*MidTierCaching               `json:"midTierCaching,omitempty"`
+	OriginRequestQueue             *OriginRequestQueue             `json:"originRequestQueue,omitempty"`
+	OriginResponseQueue            *OriginResponseQueue            `json:"originResponseQueue,omitempty"`
+	PathModification               []*PathModification             `json:"pathModification,omitempty"`
+	ScriptNegCaching               *ScriptNegCaching               `json:"scriptNegCaching,omitempty"`
+	ServerlessScripting            []*ServerlessScripting          `json:"serverlessScripting,omitempty"`
+	TossbackBypass                 *TossbackBypass                 `json:"tossbackBypass,omitempty"`
+	CloseHalfOpenConnections       *CloseHalfOpenConnections       `json:"closeHalfOpenConnections,omitempty"`
+	TossbackAlways                 *TossbackAlways                 `json:"tossbackAlways,omitempty"`
+	Rti                            []*Rti                          `json:"rti,omitempty"`
+	ClientRequestModification      []*ClientRequestModification    `json:"clientRequestModification,omitempty"`
+	ClientResponseModification     []*ClientResponseModification   `json:"clientResponseModification,omitempty"`
+	OriginRequestModification      []*OriginRequestModification    `json:"originRequestModification,omitempty"`
+	OriginResponseModification     []*OriginResponseModification   `json:"originResponseModification,omitempty"`
 }
 
 //A uniquely addressable path on the CDN to which configuration can be written
