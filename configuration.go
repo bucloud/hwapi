@@ -99,7 +99,7 @@ type HostnameReporting struct {
 
 }
 
-//
+// NrtReporting RequestReceipt near real time report
 // allowedScope PRODUCT
 type NrtReporting struct {
 	//Enable realtime reporting by hostname.
@@ -113,7 +113,7 @@ type NrtReporting struct {
 
 }
 
-// Configure settings relevant to Origin Pull Logs.
+// OriginPullLogs Configure settings relevant to Origin Pull Logs.
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -129,7 +129,7 @@ type OriginPullLogs struct {
 
 }
 
-// Configure settings relevant to Origin Pull Log Settings.
+// OriginPullLogsConfig Configure settings relevant to Origin Pull Log Settings.
 // allowedScope DIR
 type OriginPullLogsConfig struct {
 	//Generic Enabled Flag for all Config Types
@@ -145,7 +145,7 @@ type OriginPullLogsConfig struct {
 
 }
 
-// Configure settings relevant to receipt logs.
+// ReceiptLogs Configure settings relevant to receipt logs.
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -161,7 +161,7 @@ type ReceiptLogs struct {
 
 }
 
-// Configure settings relevant to Receipt Log Settings.
+// ReceiptLogsConfig Configure settings relevant to Receipt Log Settings.
 // allowedScope DIR
 type ReceiptLogsConfig struct {
 	//Generic Enabled Flag for all Config Types
@@ -176,12 +176,12 @@ type ReceiptLogsConfig struct {
 
 }
 
-//
+// RequestReceipt configure request receipt server info when nrtReporting enabled
 // groupAble OR
 // allowedScope DIR
 type RequestReceipt struct {
 	//The Full GET URL for delivery receipts.  The URL entered in this field must specify the protocol, host (port is optional), and path. Query string parameters are required UNLESS a requestReceipt/headers policy is defined. Query string parameters are in the following format:  <name>=<value> (note the equal sign) where <name> is any HTTP legal query parameter name  and <value> is either a CDN Variable or static literal.
-	UriFormat string `json:"uriFormat"` // Default: false; role: HWADMIN;
+	URIFormat string `json:"uriFormat"` // Default: false; role: HWADMIN;
 
 	//Enable Cert Verification while doing SSL connection to Receipt Origin
 	VerifyCertificate bool `json:"verifyCertificate,omitempty"` // Default: 1; role: HWADMIN;
@@ -190,7 +190,7 @@ type RequestReceipt struct {
 	Enabled bool `json:"enabled,omitempty"` // Default: 1; role: HWADMIN;
 
 	//The add receipt identifier to access logs setting allows you to track delivery receipts in your access logs. By enabling this,  the CDN caching servers will add the X-HW-Receipt Header to each receipt's corresponding Client Request Access Log entry. This is not referring to the Receipt Access Log entry. If this feature is enabled, the customer must have access logging enabled (see the Customer conf type).
-	AddIdToAccessLog bool `json:"addIdToAccessLog,omitempty"` // Default: false; role: HWADMIN;
+	AddIDToAccessLog bool `json:"addIdToAccessLog,omitempty"` // Default: false; role: HWADMIN;
 
 	//Client Response Code Match
 	ClientResponseCodeFilter string `json:"clientResponseCodeFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -236,7 +236,7 @@ type RequestReceipt struct {
 
 }
 
-// The delivery receipts report percentage policy allows you to configure the percentage of requests to provide delivery confirmation receipts.\n//
+// RequestReceiptReportPercentage The delivery receipts report percentage policy allows you to configure the percentage of requests to provide delivery confirmation receipts.\n//
 // allowedScope PRODUCT
 /* DefaultPolicy
 {
@@ -263,7 +263,7 @@ type RequestReceiptReportPercentage struct {
 
 }
 
-// Defines how to pre/sign post requests to be made by the CDN to an AWS origin.\n//Note, even though this policy is groupable, if more than one policy is defined, only one policy will ever be applied.  \n//The CDN iterates over each policy until it finds the first match or applicable policy based on scope and/or filter.\n//The CDN does not failover or attempt other policies if the chosen one failed. The Groupability was added with the \n//primary intent to provide flexibilty when needing to define different AccessKeyId/SecretAccessKey combinations, such\n//as using a popFilter to use one AccessKeyId/SecretAccessKey pair for a particular AWSRegion and another AccessKeyId/SecretAccessKey\n//pair for a different AWSRegion.  Likewise, the site may only use one AccessKeyId/SecretAccessKey across multiple AWSRegions.\n//
+// AwsSignedS3PostV4 Defines how to pre/sign post requests to be made by the CDN to an AWS origin.\n//Note, even though this policy is groupable, if more than one policy is defined, only one policy will ever be applied.  \n//The CDN iterates over each policy until it finds the first match or applicable policy based on scope and/or filter.\n//The CDN does not failover or attempt other policies if the chosen one failed. The Groupability was added with the \n//primary intent to provide flexibilty when needing to define different AccessKeyId/SecretAccessKey combinations, such\n//as using a popFilter to use one AccessKeyId/SecretAccessKey pair for a particular AWSRegion and another AccessKeyId/SecretAccessKey\n//pair for a different AWSRegion.  Likewise, the site may only use one AccessKeyId/SecretAccessKey across multiple AWSRegions.\n//
 // groupAble OR
 // allowedScope DIR
 type AwsSignedS3PostV4 struct {
@@ -278,7 +278,7 @@ type AwsSignedS3PostV4 struct {
 	AwsRegion string `json:"awsRegion"` // Default: false;
 
 	//Identifies the shared access key to be used to presign the request.
-	AccessKeyId string `json:"accessKeyId"` // Default: false;
+	AccessKeyID string `json:"accessKeyId"` // Default: false;
 
 	//Specifies what type of AWS authentication to use.
 	//
@@ -289,6 +289,7 @@ type AwsSignedS3PostV4 struct {
 	//
 	//The query and header algorithms are identical except that the expireTimeSeconds policy only is applicable to the query authentication type.
 	//Available value query, header	AuthenticationType enum[query|header] `json:"authenticationType,omitempty"` // Default: query;
+	AuthenticationType string `json:"authenticationType"`
 
 	//Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	//This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -376,21 +377,23 @@ type AwsSignedS3PostV4 struct {
 
 }
 
-// Enable access to content based on a customizable list of IP addresses.
+// AuthACL Enable access to content based on a customizable list of IP addresses.
 // groupAble AND
 // allowedScope DIR
 type AuthACL struct {
 	//Access code that indicates whether to allow or deny the IP access to the requested content.
 	//Available value allow, deny	AccessCode enum[allow|deny] `json:"accessCode"` // Default: false;
+	AccessCode string `json:"accessCode"`
 
 	//The list of IP addresses (or CIDR blocks) to that apply to this policy.  The IP addresses listed in this field will be allowed or denied based on the access directive provided in "Access Directive" field.
-	IpList string `json:"ipList"` // Default: false;
+	IPList string `json:"ipList"` // Default: false;
 
 	//Generic Enabled Flag for all Config Types
 	Enabled bool `json:"enabled,omitempty"` // Default: 1;
 
 	//Protocol for which this policy applies.
 	//Available value http, https, both	Protocol enum[http|https|both] `json:"protocol,omitempty"` // Default: both;
+	Protocol string `json:"protocol,omitempty"`
 
 	//<p>Source for the client IP to match against this policy.  Valid values are:</p>
 	//<ul>
@@ -398,6 +401,7 @@ type AuthACL struct {
 	//<li><b>header</b>: IP address from the specified header is used.</li>
 	//</ul>
 	//Available value socket, header	ClientIPSrc enum[socket|header] `json:"clientIPSrc,omitempty"` // Default: socket;
+	ClientIPSrc string `json:"clientIPSrc,omitempty"`
 
 	//Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty"` // Default: false;
@@ -407,12 +411,13 @@ type AuthACL struct {
 
 }
 
-// Restrict access to content based on the geographic location of the end-user.
+// AuthGeo Restrict access to content based on the geographic location of the end-user.
 // groupAble AND
 // allowedScope DIR
 type AuthGeo struct {
 	//The geographic code from MaxMind to apply.
 	//Available value countryCode, region, subdivisionCodes, city, postalCode, continentCode, timeZone, dmaCode, areaCode	Code enum[countryCode|region|subdivisionCodes|city|postalCode|continentCode|timeZone|dmaCode|areaCode] `json:"code"` // Default: false;
+	Code string `json:"code"`
 
 	//<p>Comma separated list of geographic codes for the region type selected. For an exclusion, use ! (exclamation). </p>
 	//<p>You should not use both inclusions and exclusions in this list.  If you want to include the continent of Europe but exclude France, you must use two different types to express that.  If a request matches any of the include rules (or if there are no include rules), and that client does not match any exclude rules, they will be granted access.</p>
@@ -426,9 +431,9 @@ type AuthGeo struct {
 
 }
 
-// Require authentication in the form of a username and password from within an HTTP user agent, or web browser.
+// AuthHTTPBasic Require authentication in the form of a username and password from within an HTTP user agent, or web browser.
 // allowedScope DIR
-type AuthHttpBasic struct {
+type AuthHTTPBasic struct {
 	//<p>The URL to the authorization endpoint.</p>
 	//<p><em>HTTPS URLs are currently not supported by this policy.</em></p>
 	BindingPoint string `json:"bindingPoint"` // Default: false;
@@ -437,7 +442,7 @@ type AuthHttpBasic struct {
 	Realm string `json:"realm"` // Default: false;
 
 	//Session timeout that an edge uses to avoid making an auth binding point call for each HTTP request. When it successfully authenticates a user, it will ask the user agent to set a cookie containing an encrypted authentication token and the TTL for the token.  Effectively, a given user should only be authenticated against the configured binding point once within the tokens TTL.
-	Ttl uint32 `json:"ttl"` // Default: false;
+	TTL uint32 `json:"ttl"` // Default: false;
 
 	//Generic Enabled Flag for all Config Types
 	Enabled bool `json:"enabled,omitempty"` // Default: 1;
@@ -450,7 +455,7 @@ type AuthHttpBasic struct {
 
 }
 
-// Restrict access to content based on a customizable list of websites or domains, or "referrers."
+// AuthReferer Restrict access to content based on a customizable list of websites or domains, or "referrers."
 // allowedScope DIR
 type AuthReferer struct {
 	//The list of domains authorized to access the content requested.
@@ -464,7 +469,7 @@ type AuthReferer struct {
 
 }
 
-// Automatically apply my URL Signing policy to URLs inside my HLS playlists.\n//
+// AuthSignUrlsInPlaylist Automatically apply my URL Signing policy to URLs inside my HLS playlists.\n//
 // allowedScope DIR
 type AuthSignUrlsInPlaylist struct {
 	//A list of glob pattern for files containing URL that needs to be signed.
@@ -490,10 +495,10 @@ type AuthSignUrlsInPlaylist struct {
 
 }
 
-// Protect files from unauthorized access with an encrypted key.
+// AuthURLSign Protect files from unauthorized access with an encrypted key.
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSign struct {
+type AuthURLSign struct {
 	//Query string parameter name which contains the URL's MD5 token signature.
 	TokenField string `json:"tokenField"` // Default: false;
 
@@ -535,12 +540,12 @@ type AuthUrlSign struct {
 
 	//<p>If present this will be a query string parameter containing an IP address of the client peer. The edge server will match the IP address in this query string parameter against the client requesting content for authorization.</p>
 	//<p><b>NOTE:</b> Only IPv4 address are supported.</p>
-	IpAddressField string `json:"ipAddressField,omitempty"` // Default: false;
+	IPAddressField string `json:"ipAddressField,omitempty"` // Default: false;
 
 	//<p>If present this will restrict the number of bytes in the path to consider for URL signing. For example, if this value is 10 and the request is for http://mydomain.com/this/is/my/path/to/a/file?queryStringStuff, then the MD5 will be calculated using the first 10 bytes of the path and the query string:</p>
 	//<p>MD5("this/is/my?queryStringStuff")</p>
 	//<p>A length value of 0 means it will strip off the filename and use directory only (with trailing '/') plus the query string parameters.</p>
-	UriLengthField string `json:"uriLengthField,omitempty"` // Default: false;
+	URILengthField string `json:"uriLengthField,omitempty"` // Default: false;
 
 	//If present this will restrict access based on the user agent. It is not required that that user agent be added to the field on the original request, just that the user agent parameter be present. The user agent will automatically be taken from the request header.
 	UserAgentField string `json:"userAgentField,omitempty"` // Default: false;
@@ -550,10 +555,10 @@ type AuthUrlSign struct {
 
 }
 
-//
+// AuthURLSignAliCloudA url signature
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignAliCloudA struct {
+type AuthURLSignAliCloudA struct {
 	//Specify the shared passphrase, or sequence of words or other text, to use when generating the signature when authenticating a request made to the CDN.
 	PassPhrase string `json:"passPhrase"` // Default: false;
 
@@ -595,10 +600,10 @@ type AuthUrlSignAliCloudA struct {
 
 }
 
-//
+// AuthURLSignAliCloudB url signature ali type B
 // groupAble OR
 // allowedScope PRODUCT
-type AuthUrlSignAliCloudB struct {
+type AuthURLSignAliCloudB struct {
 	//Specify the shared passphrase, or sequence of words or other text, to use when generating the signature when authenticating a request made to the CDN.
 	PassPhrase string `json:"passPhrase"` // Default: false;
 
@@ -634,10 +639,10 @@ type AuthUrlSignAliCloudB struct {
 
 }
 
-//
+// AuthURLSignAliCloudC url signature ali type C
 // groupAble OR
 // allowedScope PRODUCT
-type AuthUrlSignAliCloudC struct {
+type AuthURLSignAliCloudC struct {
 	//Specify the shared passphrase, or sequence of words or other text, to use when generating the signature when authenticating a request made to the CDN.
 	PassPhrase string `json:"passPhrase"` // Default: false;
 
@@ -679,15 +684,16 @@ type AuthUrlSignAliCloudC struct {
 
 }
 
-//
+// AuthURLSignHmacTlu url signature HMAC
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignHmacTlu struct {
+type AuthURLSignHmacTlu struct {
 	//One or more key-value pairs, where the key is an ID and the value is a predetermined HMAC algorithm name maps. The ID is given in a signed URL and specifies which HMAC algorithm to use for authorization.
 	//Available value hmacsha1, hmacsha256	AlgorithmIdMap hashMap<string,enum[hmacsha1|hmacsha256]> `json:"algorithmIdMap"` // Default: false;
+	AlgorithmIDMap map[string]string `json:"algorithmIdMap"`
 
 	//One or more key-value pairs, where the key is an ID and the value is shared symmetric key. The value can only printable ASCII characters and HTML encoded. The ID is given in a signed URL and specifies which symmetric key to use for authorization.
-	SymmetricKeyIdMap string `json:"symmetricKeyIdMap"` // Default: false;
+	SymmetricKeyIDMap string `json:"symmetricKeyIdMap"` // Default: false;
 
 	//Generic Enabled Flag for all Config Types
 	Enabled bool `json:"enabled,omitempty"` // Default: 1;
@@ -717,7 +723,7 @@ type AuthUrlSignHmacTlu struct {
 	Comment string `json:"comment,omitempty"` // Default: false;
 
 	//Name of the query string parameter that contains the HMAC algorithm identifier for the signed URL.
-	AlgorithmIdParameterName string `json:"algorithmIdParameterName,omitempty"` // Default: P3;
+	AlgorithmIDParameterName string `json:"algorithmIdParameterName,omitempty"` // Default: P3;
 
 	//Name of the query string parameter that contains the HMAC digest (hash) for the signed URL.
 	DigestParameterName string `json:"digestParameterName,omitempty"` // Default: P4;
@@ -726,14 +732,14 @@ type AuthUrlSignHmacTlu struct {
 	ExpireParameterName string `json:"expireParameterName,omitempty"` // Default: P1;
 
 	//Name of the query string parameter that contains the shared symmetric key identifier for the signed URL.
-	KeyIdParameterName string `json:"keyIdParameterName,omitempty"` // Default: P2;
+	KeyIDParameterName string `json:"keyIdParameterName,omitempty"` // Default: P2;
 
 }
 
-// The IQIYI signing policy allows you to restrict access to your content using various query parameters. Client requests to the CDN supply parameters that specifiy how to generate the secure token. Since the shared token and details of the algorithm are only known by the publisher and Stackpath, URL  signatures cannot be generated by unauthorized users.\n//WARNING: This needs to have a script set up in order to work properly.\n//
+// AuthURLSignIQ The IQIYI signing policy allows you to restrict access to your content using various query parameters. Client requests to the CDN supply parameters that specifiy how to generate the secure token. Since the shared token and details of the algorithm are only known by the publisher and Stackpath, URL  signatures cannot be generated by unauthorized users.\n//WARNING: This needs to have a script set up in order to work properly.\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignIq struct {
+type AuthURLSignIQ struct {
 	//Generic Enabled Flag for all Config Types
 	Enabled bool `json:"enabled,omitempty"` // Default: 1;
 
@@ -782,15 +788,16 @@ type AuthUrlSignIq struct {
 
 }
 
-// The ASYMMETRIC Time Limited URL (TLU) signing policy allow you to restrict access to your content by by use of an expiration time and Asymmetric Key based signed alglorithm that utilizes RSA private/public keys. Client requests to the CDN supply IDs that specifiy the shared public key and specific algorithm to apply to validate the signature that is also supplied in the request.  Since the private asymmetric key are only known by the publisher, URL signatures cannot be generated by unauthorized users.\n//
+// AuthURLAsymmetricSignTlu The ASYMMETRIC Time Limited URL (TLU) signing policy allow you to restrict access to your content by by use of an expiration time and Asymmetric Key based signed alglorithm that utilizes RSA private/public keys. Client requests to the CDN supply IDs that specifiy the shared public key and specific algorithm to apply to validate the signature that is also supplied in the request.  Since the private asymmetric key are only known by the publisher, URL signatures cannot be generated by unauthorized users.\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlAsymmetricSignTlu struct {
+type AuthURLAsymmetricSignTlu struct {
 	//One or more key-value pairs, where the key is an ID and the value is a predetermined HMAC algorithm name maps. The ID is given in a signed URL and specifies which HMAC algorithm to use for authorization.
 	//Available value hmacsha1, hmacsha256	AlgorithmIdMap hashMap<string,enum[hmacsha1|hmacsha256]> `json:"algorithmIdMap"` // Default: false;
+	AlgorithmIDMap map[string]string `json:"algorithmIdMap"`
 
 	//One or more key-value pairs, where the key is an ID and the value is shared public key. The ID is given in a signed URL and specifies which asymmetric key to use for authorization. Key is expected to be in Modulus and Exponent format delimited by Pipe (|).  Example: modulus: base64_value|exponent: base64_value
-	PublicKeyIdMap string `json:"publicKeyIdMap"` // Default: false;
+	PublicKeyIDMap string `json:"publicKeyIdMap"` // Default: false;
 
 	//Generic Enabled Flag for all Config Types
 	Enabled bool `json:"enabled,omitempty"` // Default: 1;
@@ -836,7 +843,7 @@ type AuthUrlAsymmetricSignTlu struct {
 	Comment string `json:"comment,omitempty"` // Default: false;
 
 	//Name of the query string parameter that contains the HMAC algorithm identifier for the signed URL.
-	AlgorithmIdParameterName string `json:"algorithmIdParameterName,omitempty"` // Default: P3;
+	AlgorithmIDParameterName string `json:"algorithmIdParameterName,omitempty"` // Default: P3;
 
 	//Name of the query string parameter that contains the HMAC digest (hash) for the signed URL.
 	DigestParameterName string `json:"digestParameterName,omitempty"` // Default: P4;
@@ -845,14 +852,14 @@ type AuthUrlAsymmetricSignTlu struct {
 	ExpireParameterName string `json:"expireParameterName,omitempty"` // Default: P1;
 
 	//Name of the query string parameter that contains the shared symmetric key identifier for the signed URL.
-	KeyIdParameterName string `json:"keyIdParameterName,omitempty"` // Default: P2;
+	KeyIDParameterName string `json:"keyIdParameterName,omitempty"` // Default: P2;
 
 }
 
-// The Level 3 URL Signing policy allows you to create a signed URL that implements the same signing method used by Level 3; therefore, published URLs from an Level 3 CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
+// AuthURLSignL3 The Level 3 URL Signing policy allows you to create a signed URL that implements the same signing method used by Level 3; therefore, published URLs from an Level 3 CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignL3 struct {
+type AuthURLSignL3 struct {
 	//An ordered list of shared secrets. The order is CRITICAL and it MUST be identical to the ordered table used by the Client.
 	SharedSecretTable string `json:"sharedSecretTable"` // Default: false; role: HWADMIN;
 
@@ -875,6 +882,7 @@ type AuthUrlSignL3 struct {
 	//  1. epoch: An integer representing the number of seconds since January 1, 1970 on a UNIX/POSIX system.
 	//  2. datetime: A numerical representation of a date and time in GMT in the format yyyymmddHHMMSS.
 	//Available value epoch, datetime	TimeFormat enum[epoch|datetime] `json:"timeFormat,omitempty"` // Default: epoch; role: HWADMIN;
+	TimeFormat string `json:"timeFormat,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -914,10 +922,10 @@ type AuthUrlSignL3 struct {
 
 }
 
-// The Akamai URL Signing v1 policy allows you to create a signed URL that implements the same signing  method used by Akamai; therefore, published URLs from an Akamai CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
+// AuthURLSignAKv1 The Akamai URL Signing v1 policy allows you to create a signed URL that implements the same signing  method used by Akamai; therefore, published URLs from an Akamai CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignAKv1 struct {
+type AuthURLSignAKv1 struct {
 	//The salt is used as a shared secret in the signing process. This value should only be known by Highwinds and by systems authorized to sign your content.
 	Salt string `json:"salt"` // Default: false; role: HWADMIN;
 
@@ -956,10 +964,10 @@ type AuthUrlSignAKv1 struct {
 
 }
 
-// The Akamai URL Signing v2 policy allows you to create a signed URL that implements the same signing  method used by Akamai; therefore, published URLs from an Akamai CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
+// AuthURLSignAKv2 The Akamai URL Signing v2 policy allows you to create a signed URL that implements the same signing  method used by Akamai; therefore, published URLs from an Akamai CDN network can be transitioned to the Highwinds network without you having to change your signing methods.\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignAKv2 struct {
+type AuthURLSignAKv2 struct {
 	//This is the shared secret used to sign the URL.  This value must be set to a hexadecimal value padded to a byte boundary.  This value should only be known by Highwinds and by personnel authorized to sign your content.
 	PassPhrase string `json:"passPhrase"` // Default: false; role: HWADMIN;
 
@@ -973,13 +981,14 @@ type AuthUrlSignAKv2 struct {
 	EnableACLWildcard bool `json:"enableACLWildcard,omitempty"` // Default: 1; role: HWADMIN;
 
 	//This is the delimiter used to separate the IP addresses in the ACL list.
-	AclDelimiter string `json:"aclDelimiter,omitempty"` // Default: !; role: HWADMIN;
+	ACLDelimiter string `json:"aclDelimiter,omitempty"` // Default: !; role: HWADMIN;
 
 	//This is the field delimiter used to separate the parts of your token.
 	FieldDelimiter string `json:"fieldDelimiter,omitempty"` // Default: ~; role: HWADMIN;
 
 	//This is the hashing algorithm used to sign the URLs.
 	//Available value sha1, sha256, md5	HashStrategy enum[sha1|sha256|md5] `json:"hashStrategy,omitempty"` // Default: sha256; role: HWADMIN;
+	HashStrategy string `json:"hashStrategy,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -1013,10 +1022,10 @@ type AuthUrlSignAKv2 struct {
 
 }
 
-// The Limelight Networks URL signing policy allows you to create a signed URL that implements the same signing  method used by Limelight Networks; therefore, published URLs from a Limelight CDN network can be transitioned to the Highwinds network without you having to change your URLs (or the signing process).\n//
+// AuthURLSignLMV The Limelight Networks URL signing policy allows you to create a signed URL that implements the same signing  method used by Limelight Networks; therefore, published URLs from a Limelight CDN network can be transitioned to the Highwinds network without you having to change your URLs (or the signing process).\n//
 // groupAble OR
 // allowedScope DIR
-type AuthUrlSignLMV struct {
+type AuthURLSignLMV struct {
 	//This is the shared secret used to sign the URL.  This value should only be known by Highwinds and by personnel authorized to sign your content.
 	Secret string `json:"secret"` // Default: false; role: HWADMIN;
 
@@ -1054,7 +1063,7 @@ type AuthUrlSignLMV struct {
 	EndTimeFieldName string `json:"endTimeFieldName,omitempty"` // Default: e; role: HWADMIN;
 
 	//The parameter name to specify the ip mask value.
-	IpFieldName string `json:"ipFieldName,omitempty"` // Default: ip; role: HWADMIN;
+	IPFieldName string `json:"ipFieldName,omitempty"` // Default: ip; role: HWADMIN;
 
 	//The parameter name to specify the length value.
 	LengthFieldName string `json:"lengthFieldName,omitempty"` // Default: p; role: HWADMIN;
@@ -1073,7 +1082,7 @@ type AuthUrlSignLMV struct {
 
 }
 
-// The Hostname Access policy allows you to restrict delivery of your content to your configured Hostnames.  Any request for your content that is not using one of your configured hostnames will be denied.\n//
+// AuthVhostLockout The Hostname Access policy allows you to restrict delivery of your content to your configured Hostnames.  Any request for your content that is not using one of your configured hostnames will be denied.\n//
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -1092,7 +1101,7 @@ type AuthVhostLockout struct {
 
 }
 
-// Limit the transfer rate of files by extension.
+// BandWidthLimit Limit the transfer rate of files by extension.
 // allowedScope DIR
 type BandWidthLimit struct {
 	//Rule to apply bandwidth limiting on responses. Each rule is separated by '|' and consists of a glob match for the user agent and a coma separated glob match list of file extensions separated by ':' [/Pattern/User-Agent 1/Pattern/]:[comma separated Path/FileExtension]|[/Pattern/User-Agent 2/Pattern/]:[comma separated Path/FileExtension]
@@ -1109,7 +1118,7 @@ type BandWidthLimit struct {
 
 }
 
-// Limit the transfer rate of files in general, as opposed to by extension like Pattern Based Bandwidth Rate Limiting.
+// BandwidthRateLimit Limit the transfer rate of files in general, as opposed to by extension like Pattern Based Bandwidth Rate Limiting.
 // allowedScope DIR
 type BandwidthRateLimit struct {
 	//Generic Enabled Flag for all Config Types
@@ -1117,9 +1126,11 @@ type BandwidthRateLimit struct {
 
 	//The units used by the initial burst parameter on the URL.
 	//Available value byte, kilobyte	InitialBurstUnits enum[byte|kilobyte] `json:"initialBurstUnits,omitempty"` // Default: byte;
+	InitialBurstUnits string `json:"initialBurstUnits,omitempty"`
 
 	//The units used by the Sustained Rate parameter on the URL.
 	//Available value kilobit, kilobyte	SustainedRateUnits enum[kilobit|kilobyte] `json:"sustainedRateUnits,omitempty"` // Default: kilobit;
+	SustainedRateUnits string `json:"sustainedRateUnits,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -1153,7 +1164,7 @@ type BandwidthRateLimit struct {
 
 }
 
-// Override the default units used by the CDN when processing the bandwidth throttling policies.\n//
+// BandWidthRateLimitUnits Override the default units used by the CDN when processing the bandwidth throttling policies.\n//
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -1167,16 +1178,18 @@ type BandWidthRateLimitUnits struct {
 
 	//Deprecated By bandwidthRateLimit/initialBurstUnits
 	//Available value byte, kilobyte	Initial enum[byte|kilobyte] `json:"initial,omitempty"` // Default: byte;
+	Initial string `json:"initial,omitempty"`
 
 	//Deprecated By bandwidthRateLimit/sustainedRateUnits
 	//Available value kilobit, kilobyte	Sustained enum[kilobit|kilobyte] `json:"sustained,omitempty"` // Default: kilobit;
+	Sustained string `json:"sustained,omitempty"`
 
 	//Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty"` // Default: false;
 
 }
 
-// This allows you to override the default client access policy file (clientaccesspolicy.xml) delivered by the CDN caching servers.\n//
+// ClientAccess This allows you to override the default client access policy file (clientaccesspolicy.xml) delivered by the CDN caching servers.\n//
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -1196,7 +1209,7 @@ type ClientAccess struct {
 
 }
 
-// Speed up your websites or web apps by making certain files smaller before they're delivered to end-users.
+// Compression Speed up your websites or web apps by making certain files smaller before they're delivered to end-users.
 // allowedScope DIR
 type Compression struct {
 	//Generic Enabled Flag for all Config Types
@@ -1205,6 +1218,7 @@ type Compression struct {
 	//
 	//The level of compression for requested compressed files. Acceptable values are 0 to 6. 0 is no compression, 1 is high speed, 6 is high compression. The default is 6. If an invalid number is chosen, we will use the default.
 	//Available value 1, 2, 3, 4, 5, 6	Level enum[1|2|3|4|5|6] `json:"level,omitempty"` // Default: 6;
+	Level string `json:"level,omitempty"`
 
 	//Comma separated list of extensions to apply gzip compression. Content is only gziped after the first cache response.
 	//
@@ -1219,7 +1233,7 @@ type Compression struct {
 
 }
 
-// Control the Content-Disposition header on the response from the Origin via the request URL of end-user clients.
+// ContentDispositionByURL Control the Content-Disposition header on the response from the Origin via the request URL of end-user clients.
 // allowedScope DIR
 type ContentDispositionByURL struct {
 	//The Query String parameter name which will specify the filename used in the Content-Disposition header
@@ -1260,6 +1274,7 @@ type ContentDispositionByHeader struct {
 
 	//The default Content-Disposition type when the header is enabled
 	//Available value attachment, inline	DefaultType enum[attachment|inline] `json:"defaultType,omitempty"` // Default: attachment;
+	DefaultType string `json:"defaultType,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *;
@@ -1418,9 +1433,10 @@ type DnsIpv6 struct {
 //
 // groupAble AND
 // allowedScope PRODUCT
-type DnsOverride struct {
+type DNSOverride struct {
 	//The record type. Use A for IPv4, AAAA for IPv6, and CNAME to forward to a foreign DNS system. You may have multiple DNS overrides of type A or AAAA, but you cannot combine a CNAME override with an A or AAAA record.
 	//Available value A, AAAA, CNAME	Type enum[A|AAAA|CNAME] `json:"type"` // Default: false; role: HWADMIN;
+	Type string `json:"type"`
 
 	//The answer that the DNS server will give. This should be an IPv4 address for records of type A, an IPv6 address for records of type AAAA, or a valid domain for type CNAME
 	Answer string `json:"answer"` // Default: false; role: HWADMIN;
@@ -1438,7 +1454,7 @@ type DnsOverride struct {
 	Weight uint32 `json:"weight,omitempty"` // Default: 1; role: HWADMIN;
 
 	//The time to live to present to caching name servers.
-	Ttl uint32 `json:"ttl,omitempty"` // Default: 300; role: HWADMIN;
+	TTL uint32 `json:"ttl,omitempty"` // Default: 300; role: HWADMIN;
 
 }
 
@@ -1541,7 +1557,7 @@ type General struct {
     "passThru": "POST"
 }
 */
-type HttpMethods struct {
+type HTTPMethods struct {
 	//A comma separated list of HTTP methods for no-store like pass thru behavior. GET and HEAD is always excluded from this list. A "*" can also be used to include all methods. GET and HEAD are always excluded from this list even when "*" is used.
 	PassThru string `json:"passThru"` // Default: false;
 
@@ -1817,7 +1833,7 @@ type StaticHeader struct {
 	ClientRequest string `json:"clientRequest,omitempty"` // Default: false;
 
 	//The full HTTP header, including the value(s), to insert into the HTTP response from the CDN.  This field allows use of client and server variables (e.g. %server.ip% or %client.ip%)
-	Http string `json:"http,omitempty"` // Default: false;
+	HTTP string `json:"http,omitempty"` // Default: false;
 
 }
 
@@ -2071,6 +2087,7 @@ type FileSegmentation struct {
 
 	//Specifies how the CDN requests assets from the origin by default for assets in this scope when fileSegmentation/enabled is true. Range: The CDN makes a GET request with a Range for the first segment, bytes 0 through <segment_size> - 1. The CDN retries with a full-file request if the range request fails.  Full: The CDN makes a GET request for the full/entire asset (i.e. no Range).  If the asset can be segmented, the CDN halts the download once <segment_size> bytes have been ingested and closes the connection.   The variable segment_size is globally defined by the CDN.  Once the CDN determines an asset is segmentable, it uses Range requests for all additonal segments regardless of the initial origin request type.
 	//Available value range, full	InitialOriginRequestBehavior enum[range|full] `json:"initialOriginRequestBehavior,omitempty"` // Default: full; role: HWADMIN;
+	InitialOriginRequestBehavior string `json:"initialOriginRequestBehavior,omitempty"`
 
 	//All inclusive or exclusive list of HTTP status code glob patterns that filters what responses trigger a retry.   When the initialOriginRequestBehavior is set to range and the origin response is not 200/206, the CDN immediately  makes a request for the full-file (no Range) when the status code matches this filter. Otherwise, the CDN waits  until the asset expires before trying again.   By default, the CDN does not immediately remake retry after receiving an internal server (5XX) or a not found (404) response. Note that the CDN handles redirect origin responses (301, 304, etc) based on relavent policies and configuration for this site,  such as originPull/redirectAction.  Therefore those related status codes are not required and should not be included unless  there is a legit reason.
 	InitialRangeRetryFilter string `json:"initialRangeRetryFilter,omitempty"` // Default: !404,!5*; role: HWADMIN;
@@ -2094,6 +2111,7 @@ type VaryHeaderField struct {
 
 	//Define how the CDN proxies the Vary header from the origin to an end-user. whole: send the entire Vary header as-is regardless if the CDN used it for dynamic caching (similar to OriginPullPolicy/HttpHeaders)  filtered: send only the values from the origin Vary header that the CDN actually used (which is a product from the valuesFilter, the Vary origin header and the headers in the client request) none: do not proxy any of the Vary header regardless if it was used for dynamic caching Note, this policy takes precendence over OriginPullPolicy/HttpHeaders
 	//Available value whole, filtered, none	ProxyBehavior enum[whole|filtered|none] `json:"proxyBehavior,omitempty"` // Default: filtered; role: HWADMIN;
+	ProxyBehavior string `json:"proxyBehavior,omitempty"`
 
 	//Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty"` // Default: false; role: HWADMIN;
@@ -2161,11 +2179,13 @@ type OriginPull struct {
 	//<p><b>NOCACHE:</b> assume the no-cache/no-store behavior until we found out otherwise from the origin.
 	//<p><b>NOSTORE:</b> force everything to be uncachable regardless of what the origin returns
 	//Available value dedup, nocache, nostore	DefaultBehavior enum[dedup|nocache|nostore] `json:"defaultBehavior,omitempty"` // Default: dedup; role: HWADMIN;
+	DefaultBehavior string `json:"defaultBehavior,omitempty"`
 
 	//<p>Dictates the behavior upon a HTTP redirect response from origin. Possible values are:</p>
 	//<p><b>follow:</b> For following the redirects from the origin</p>
 	//<p><b>proxy:</b> For proxying the redirect response back to the client without following it</p>
 	//Available value follow, proxy	RedirectAction enum[follow|proxy] `json:"redirectAction,omitempty"` // Default: follow;
+	RedirectAction string `json:"redirectAction,omitempty"`
 
 	//Comma-delimited list of HTTP Methods that define types of origin pull requests that can be retried if a failure occurs after sending a previous request. List must be entirely inclusion or exclusion.
 	RetryMethods string `json:"retryMethods,omitempty"` // Default: false;
@@ -2178,7 +2198,7 @@ type OriginPull struct {
 
 }
 
-// Configure whether the CDN should use secured or non-secured connections when communicating with the Origin.
+// OriginPullProtocol Configure whether the CDN should use secured or non-secured connections when communicating with the Origin.
 // allowedScope DIR
 /* DefaultPolicy
 {
@@ -2188,6 +2208,7 @@ type OriginPull struct {
 type OriginPullProtocol struct {
 	//Set the origin pull protocol to use on requests to the origin.  Valid values are HTTP Only, HTTPs Only, Match Request Protocol (CDN caches asset separately for HTTP and HTTPs).
 	//Available value http, https, match	Protocol enum[http|https|match] `json:"protocol"` // Default: false;
+	Protocol string `json:"protocol,omitempty"`
 
 	//If enabled, CDN will use SNI while making secured connection to origin
 	EnableSNI bool `json:"enableSNI,omitempty"` // Default: 1;
@@ -2229,9 +2250,11 @@ type OriginPullShield struct {
 
 	//Control how the Edge PoP handles errors experienced by a shielding PoP before it receives a full response from an external origin.
 	//Available value NONE, CONNECTION_ONLY, WRITE_ONLY, WRITE_READ, ALL	PermissibleShieldInternalErrors enum[NONE|CONNECTION_ONLY|WRITE_ONLY|WRITE_READ|ALL] `json:"permissibleShieldInternalErrors,omitempty"` // Default: CONNECTION_ONLY; role: HWADMIN;
+	PermissibleShieldInternalErrors string `json:"permissibleShieldInternalErrors,omitempty"`
 
 	//Changes how doppler response to shielding request. "redirect" will use a 301 redirect response to direct the client facing gfs to the correct shielding gfs for the file. "tlb" will serve the file  directly through TLB.
 	//Available value redirect, tlb	Behavior enum[redirect|tlb] `json:"behavior,omitempty"` // Default: redirect; role: HWADMIN;
+	Behavior string `json:"behavior"`
 
 	//Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty"` // Default: false; role: HWADMIN;
@@ -2322,7 +2345,7 @@ type AwsSignedOriginPullV4 struct {
 	AwsRegion string `json:"awsRegion"` // Default: false;
 
 	//Identifies the shared access key to be used to presign the request.
-	AccessKeyId string `json:"accessKeyId"` // Default: false;
+	AccessKeyID string `json:"accessKeyId"` // Default: false;
 
 	//Specifies what type of AWS authentication to use.
 	//
@@ -2333,6 +2356,7 @@ type AwsSignedOriginPullV4 struct {
 	//
 	//The query and header algorithms are identical except that the expireTimeSeconds policy only is applicable to the query authentication type.
 	//Available value query, header	AuthenticationType enum[query|header] `json:"authenticationType,omitempty"` // Default: query;
+	AuthenticationType string `json:"authenticationType,omitempty"`
 
 	//Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	//This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -2839,6 +2863,7 @@ type OriginPullPolicy struct {
 	//<br /><br />
 	//<strong>Do Not Cache:</strong><br />Content will not be cached.
 	//Available value CACHE_CONTROL, INGEST, LAST_MODIFY, NEVER_EXPIRE, DO_NOT_CACHE	ExpirePolicy enum[CACHE_CONTROL|INGEST|LAST_MODIFY|NEVER_EXPIRE|DO_NOT_CACHE] `json:"expirePolicy"` // Default: false;
+	ExpirePolicy string `json:"expirePolicy"`
 
 	//If expirePolicy is INGEST or LAST_MODIFY, then this is the number of seconds since ingest, last access or last modify to expire the file. If expirePolicy is CACHE_CONTROL and there is no Cache-Control header, this is the default caching max-age for positive response, 0 in this case means cache as long as possible (until LRU remove the file). For negative response without a statusCodeMatch matching the status code, the originPullNegLinger value will be used.
 	ExpireSeconds int32 `json:"expireSeconds"` // Default: false;
@@ -2872,7 +2897,7 @@ type OriginPullPolicy struct {
 	HonorSMaxAge bool `json:"honorSMaxAge,omitempty"` // Default: false;
 
 	//Update the cached origin headers in cache when there is a newer value in a 304 response from the origin. To remove existing cached headers, the response from origin must contain the header key with an empty value.
-	UpdateHttpHeadersOn304Response bool `json:"updateHttpHeadersOn304Response,omitempty"` // Default: false;
+	UpdateHTTPHeadersOn304Response bool `json:"updateHttpHeadersOn304Response,omitempty"` // Default: false;
 
 	//<p>Set to false to override the origin shielding setting when the cache-control is no-cache.</p>
 	//<p>NOTE: This feature only applies for no-cache asset.</p>
@@ -2880,6 +2905,7 @@ type OriginPullPolicy struct {
 
 	//Specify between the legacy or the spec behavior. The legacy behavior is to just treat the asset as always expired. The spec behavior is un-dedup the queue and proxy the headers from the client directly to the origin.
 	//Available value legacy, spec	NoCacheBehavior enum[legacy|spec] `json:"noCacheBehavior,omitempty"` // Default: legacy;
+	NoCacheBehavior string `json:"noCacheBehavior,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *;
@@ -2941,9 +2967,11 @@ type ClientRequestQueue struct {
 	//This is used as a variable in a script for controlling how an ACL is applied. If set to allow, the ACL is treated as a white-list.  If set to deny, the ACL is treated as a black-list (Default: allow).
 	//NOTE: This is NOT a base functionality provided by all scripts.  It must be written into each customer script.  Check with the script author prior to using this key.
 	//Available value allow, deny	IpListAccessCode enum[allow|deny] `json:"ipListAccessCode,omitempty"` // Default: allow; role: HWADMIN;
+	IPListAccessCode string `json:"ipListAccessCode,omitempty"`
 
 	//This determines the level of script engine logging done for the queue. It is useful for debugging script engine  failures when developing new scripts.
 	//Available value debug, info, warning, error, crit	LogLevel enum[debug|info|warning|error|crit] `json:"logLevel,omitempty"` // Default: error; role: HWADMIN;
+	LogLevel string `json:"logLevel,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -2994,6 +3022,7 @@ type ClientResponseQueue struct {
 
 	//This determines the level of script engine logging done for the queue. It is useful for debugging script  engine failures when developing new scripts.
 	//Available value debug, info, warning, error, crit	LogLevel enum[debug|info|warning|error|crit] `json:"logLevel,omitempty"` // Default: error; role: HWADMIN;
+	LogLevel string `json:"logLevel,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -3312,10 +3341,12 @@ type MidTierCaching struct {
 
 	//The protocol used to communicate with the Mid Tier Cache server. 'match' will use the same protocol from the end user request.
 	//Available value http, https, match	Protocol enum[http|https|match] `json:"protocol"` // Default: false; role: HWADMIN;
+	Protocol string `json:"protocol"`
 
 	//This setting determine how the request should be constructed when origin pulling from the Mid Tier Cache server. "internal" will construct the request like we are communicating with a shield. "external" will construct the request like we are communicating with an external origin.
 	//WARNING: only "internal" is support for now as of 974-1
 	//Available value internal, external	RequestFormat enum[internal|external] `json:"requestFormat"` // Default: false; role: HWADMIN;
+	RequestFormat string `json:"requestFormat"`
 
 	//The mid tier caching server endpoint in the format of server:port.  If port is not present, it will be default to port 80
 	ServerAndPort string `json:"serverAndPort"` // Default: false; role: HWADMIN;
@@ -3348,6 +3379,7 @@ type OriginRequestQueue struct {
 
 	//This determines the level of script engine logging done for the queue.  It is useful for debugging script engine failures when developing new scripts.
 	//Available value debug, info, warning, error, crit	LogLevel enum[debug|info|warning|error|crit] `json:"logLevel,omitempty"` // Default: error; role: HWADMIN;
+	LogLevel string `json:"logLevel,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -3392,6 +3424,7 @@ type OriginResponseQueue struct {
 
 	//This determines the level of script engine logging done for the queue.  This is useful for debugging script engine failures when developing new scripts.
 	//Available value debug, info, warning, error, crit	LogLevel enum[debug|info|warning|error|crit] `json:"logLevel,omitempty"` // Default: error; role: HWADMIN;
+	LogLevel string `json:"logLevel,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *; role: HWADMIN;
@@ -3622,6 +3655,7 @@ type ClientRequestModification struct {
 	//<p><b>Next</b> - This is default, continue processing next policy</p>
 	//<p><b>Break</b> - Don't process any other policy</p>
 	//Available value next, break	FlowControl enum[next|break] `json:"flowControl,omitempty"` // Default: next;
+	FlowControl string `json:"flowControl,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *;
@@ -3662,10 +3696,10 @@ type ClientRequestModification struct {
 	HeaderPattern string `json:"headerPattern,omitempty"` // Default: false;
 
 	//The URL pattern that applies to this policy.
-	UrlPattern string `json:"urlPattern,omitempty"` // Default: false;
+	URLPattern string `json:"urlPattern,omitempty"` // Default: false;
 
 	//The replacement URL used in conjunction with the url pattern. This key can be used with the client and server variables (e.g. %server.ip%)
-	UrlRewrite string `json:"urlRewrite,omitempty"` // Default: false;
+	URLRewrite string `json:"urlRewrite,omitempty"` // Default: false;
 
 	//The replacement header used in conjunction with the header pattern.  This key can be used with the client and server variables (e.g. %server.ip%)
 	HeaderRewrite string `json:"headerRewrite,omitempty"` // Default: false;
@@ -3683,6 +3717,7 @@ type ClientResponseModification struct {
 	//<p><b>Next</b> - This is default, continue processing next policy</p>
 	//<p><b>Break</b> - Don't process any other policy</p>
 	//Available value next, break	FlowControl enum[next|break] `json:"flowControl,omitempty"` // Default: next;
+	FlowControl string `json:"flowControl,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *;
@@ -3792,6 +3827,7 @@ type OriginResponseModification struct {
 	//<p><b>Next</b> - This is default, continue processing next policy</p>
 	//<p><b>Break</b> - Don't process any other policy</p>
 	//Available value next, break	FlowControl enum[next|break] `json:"flowControl,omitempty"` // Default: next;
+	FlowControl string `json:"flowControl,omitempty"`
 
 	//HTTP Method Filter
 	MethodFilter string `json:"methodFilter,omitempty"` // Default: *;
