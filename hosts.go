@@ -10,6 +10,15 @@ type HostList struct {
 	List []*Host `json:"list"` //list
 }
 
+// Hosts return hosts map directly
+func (hl *HostList) Hosts() map[string]*Host {
+	r := map[string]*Host{}
+	for _, h := range hl.List {
+		r[h.HashCode] = h
+	}
+	return r
+}
+
 //
 type CloneHost struct {
 	Name      string   `json:"name"`      //The name of the host
