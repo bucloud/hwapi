@@ -58,7 +58,7 @@ type AccessLogs struct {
     "enabled": true
 }
 */
-type AccessLogIpObfuscation struct {
+type AccessLogIPObfuscation struct {
 	//Enable IP address obfuscation of access logs for this customer. Complies with GDPR and obfuscates IPv4 addresses using /24 and IPv6 addresses using /96 bitmasks.
 	//WARNING: DO NOT TURN THIS OFF UNLESS WE GOT A CLEAR FROM LEGAL AND SECURITY TEAM
 	Enabled bool `json:"enabled,omitempty"` // Default: 1; role: HWADMIN;
@@ -3988,7 +3988,7 @@ type Configuration struct {
 	Scope                          Scope                           `json:"scope"` //The scope at which this configuration is set
 	AccessLogger                   *AccessLogger                   `json:"accessLogger,omitempty"`
 	AccessLogs                     *AccessLogs                     `json:"accessLogs,omitempty"`
-	AccessLogIpObfuscation         *AccessLogIpObfuscation         `json:"accessLogIpObfuscation,omitempty"`
+	AccessLogIPObfuscation         *AccessLogIPObfuscation         `json:"accessLogIpObfuscation,omitempty"`
 	AccessLogsConfig               *AccessLogsConfig               `json:"accessLogsConfig,omitempty"`
 	HostnameReporting              *HostnameReporting              `json:"hostnameReporting,omitempty"`
 	NrtReporting                   *NrtReporting                   `json:"nrtReporting,omitempty"`
@@ -4001,20 +4001,20 @@ type Configuration struct {
 	AwsSignedS3PostV4              []*AwsSignedS3PostV4            `json:"awsSignedS3PostV4,omitempty"`
 	AuthACL                        []*AuthACL                      `json:"authACL,omitempty"`
 	AuthGeo                        []*AuthGeo                      `json:"authGeo,omitempty"`
-	AuthHttpBasic                  *AuthHttpBasic                  `json:"authHttpBasic,omitempty"`
+	AuthHTTPBasic                  *AuthHTTPBasic                  `json:"authHttpBasic,omitempty"`
 	AuthReferer                    *AuthReferer                    `json:"authReferer,omitempty"`
 	AuthSignUrlsInPlaylist         *AuthSignUrlsInPlaylist         `json:"authSignUrlsInPlaylist,omitempty"`
-	AuthUrlSign                    []*AuthUrlSign                  `json:"authUrlSign,omitempty"`
-	AuthUrlSignAliCloudA           []*AuthUrlSignAliCloudA         `json:"authUrlSignAliCloudA,omitempty"`
-	AuthUrlSignAliCloudB           []*AuthUrlSignAliCloudB         `json:"authUrlSignAliCloudB,omitempty"`
-	AuthUrlSignAliCloudC           []*AuthUrlSignAliCloudC         `json:"authUrlSignAliCloudC,omitempty"`
-	AuthUrlSignHmacTlu             []*AuthUrlSignHmacTlu           `json:"authUrlSignHmacTlu,omitempty"`
-	AuthUrlSignIq                  []*AuthUrlSignIq                `json:"authUrlSignIq,omitempty"`
-	AuthUrlAsymmetricSignTlu       []*AuthUrlAsymmetricSignTlu     `json:"authUrlAsymmetricSignTlu,omitempty"`
-	AuthUrlSignL3                  []*AuthUrlSignL3                `json:"authUrlSignL3,omitempty"`
-	AuthUrlSignAKv1                []*AuthUrlSignAKv1              `json:"authUrlSignAKv1,omitempty"`
-	AuthUrlSignAKv2                []*AuthUrlSignAKv2              `json:"authUrlSignAKv2,omitempty"`
-	AuthUrlSignLMV                 []*AuthUrlSignLMV               `json:"authUrlSignLMV,omitempty"`
+	AuthURLSign                    []*AuthURLSign                  `json:"authUrlSign,omitempty"`
+	AuthURLSignAliCloudA           []*AuthURLSignAliCloudA         `json:"authUrlSignAliCloudA,omitempty"`
+	AuthURLSignAliCloudB           []*AuthURLSignAliCloudB         `json:"authUrlSignAliCloudB,omitempty"`
+	AuthURLSignAliCloudC           []*AuthURLSignAliCloudC         `json:"authUrlSignAliCloudC,omitempty"`
+	AuthURLSignHmacTlu             []*AuthURLSignHmacTlu           `json:"authUrlSignHmacTlu,omitempty"`
+	AuthURLSignIQ                  []*AuthURLSignIQ                `json:"authUrlSignIq,omitempty"`
+	AuthURLAsymmetricSignTlu       []*AuthURLAsymmetricSignTlu     `json:"authUrlAsymmetricSignTlu,omitempty"`
+	AuthURLSignL3                  []*AuthURLSignL3                `json:"authUrlSignL3,omitempty"`
+	AuthURLSignAKv1                []*AuthURLSignAKv1              `json:"authUrlSignAKv1,omitempty"`
+	AuthURLSignAKv2                []*AuthURLSignAKv2              `json:"authUrlSignAKv2,omitempty"`
+	AuthURLSignLMV                 []*AuthURLSignLMV               `json:"authUrlSignLMV,omitempty"`
 	AuthVhostLockout               *AuthVhostLockout               `json:"authVhostLockout,omitempty"`
 	BandWidthLimit                 *BandWidthLimit                 `json:"bandWidthLimit,omitempty"`
 	BandwidthRateLimit             *BandwidthRateLimit             `json:"bandwidthRateLimit,omitempty"`
@@ -4027,12 +4027,12 @@ type Configuration struct {
 	CrossDomain                    *CrossDomain                    `json:"crossDomain,omitempty"`
 	CustomMimeType                 []*CustomMimeType               `json:"customMimeType,omitempty"`
 	DNSIpv6                        *DnsIpv6                        `json:"dnsIpv6,omitempty"`
-	DNSOverride                    []*DnsOverride                  `json:"dnsOverride,omitempty"`
+	DNSOverride                    []*DNSOverride                  `json:"dnsOverride,omitempty"`
 	DynamicCacheRule               []*DynamicCacheRule             `json:"dynamicCacheRule,omitempty"`
 	Flv                            *Flv                            `json:"flv,omitempty"`
 	FlvPseudoStreaming             *FlvPseudoStreaming             `json:"flvPseudoStreaming,omitempty"`
 	General                        *General                        `json:"general,omitempty"`
-	HTTPMethods                    *HttpMethods                    `json:"httpMethods,omitempty"`
+	HTTPMethods                    *HTTPMethods                    `json:"httpMethods,omitempty"`
 	LegacyXdomain                  *LegacyXdomain                  `json:"legacyXdomain,omitempty"`
 	LiveStreaming                  []*LiveStreaming                `json:"liveStreaming,omitempty"`
 	PreserveRedirectHost           *PreserveRedirectHost           `json:"preserveRedirectHost,omitempty"`
