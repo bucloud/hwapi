@@ -3887,35 +3887,16 @@ type HostName struct {
 //Configuration graph
 type Graph struct {
 	// value could been empty array, means this account doesn't contains any vaild hosts
-	hosts   interface{}
-	origins []*OriginAttributes
-}
-
-// Hosts convert empty array to
-func (g *Graph) Hosts() map[string]*HostAttributes {
-	switch g.hosts.(type) {
-	case map[string]*HostAttributes:
-		return g.hosts.(map[string]*HostAttributes)
-	default:
-		return map[string]*HostAttributes{}
-	}
-}
-
-// Origins convert array origins to map with originID as key
-func (g *Graph) Origins() map[string]*OriginAttributes {
-	r := map[string]*OriginAttributes{}
-	for _, o := range g.origins {
-		r[o.ID] = o
-	}
-	return r
+	Hosts   map[string]*HostAttributes `json:"hosts,omitempty"`
+	Origins []*OriginAttributes        `json:"origins,omitempty"`
 }
 
 // OriginsUsed return origins list used by hosthash's scopeID
 func (g *Graph) OriginsUsed(hostHash, scopeID string) []*OriginAttributes {
-	if !(g.Hosts() == nil || g.Hosts()[hostHash] == nil || g.Hosts()[hostHash].Scopes == nil || g.Hosts()[hostHash].Scopes[scopeID] == nil) {
+	if !(g.Hosts[hostHash] == nil || g.Hosts[hostHash].Scopes == nil || g.Hosts[hostHash].Scopes[scopeID] == nil) {
 		return []*OriginAttributes{}
 	}
-	return g.Hosts()[hostHash].Scopes[scopeID].Origins
+	return g.Hosts[hostHash].Scopes[scopeID].Origins
 }
 
 //Host attributes
