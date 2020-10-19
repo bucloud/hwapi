@@ -2,6 +2,8 @@ package hwapi
 
 import (
 	"net/http"
+
+	"github.com/VictoriaMetrics/fastcache"
 )
 
 type HWApi struct {
@@ -9,15 +11,22 @@ type HWApi struct {
 	AuthToken   *AuthToken
 	authInfo    *authInfo
 	CurrentUser *User
+	cache       *fastcache.Cache
 }
+
+const (
+	// maxCacheSize mem/file cache max bytes
+	maxCacheSize int = 128 * 1024 * 1024
+)
 
 func init() {
 }
 
-//Initiation HWApi
+//Init HWApi
 //Default timeout is 30s and maxConns is 10
 func Init(tr *http.Transport) *HWApi {
 	return &HWApi{
-		hc: tr,
+		hc:    tr,
+		cache: fastcache.New(maxCacheSize),
 	}
 }
