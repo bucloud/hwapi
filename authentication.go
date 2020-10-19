@@ -13,7 +13,8 @@ type AuthToken struct {
 	RefreshToken string `json:"refresh_token,omitepty"` //Refresh token
 	UserAgent    string `json:"user_agent"`             //User agent
 	Application  string `json:"application"`            //Application
-	Ip           string `json:"ip"`                     //IP
+	IP           string `json:"ip"`                     //IP
+	LogTokens    string `json:"-"`                      //token used to access accesslogs
 }
 
 type Authentication struct {
@@ -92,10 +93,10 @@ func (api *HWApi) GetTokens(accountHash string, uid int) (*AccessTokenList, erro
 	return atl, json.Unmarshal(r.body, atl)
 }
 
-//Delete token
-func (api *HWApi) DeleteToken(a string, uid int, tokenId int) (bool, error) {
+// DeleteToken Delete token
+func (api *HWApi) DeleteToken(a string, uid int, tokenID int) (bool, error) {
 	_, e := api.Request(&Request{
-		Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens/%d", a, uid, tokenId),
+		Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens/%d", a, uid, tokenID),
 		Method: DELETE,
 	})
 	if e != nil {
@@ -104,8 +105,30 @@ func (api *HWApi) DeleteToken(a string, uid int, tokenId int) (bool, error) {
 	return false, e
 }
 
-//Authenticate user or refresh an access token
-func (api *HWApi) Auth(u string, p string) (*AuthToken, error) {
+// Auth Authenticate user or refresh an access token
+// if you want to get accesslogs token, set  accesslog to true
+func (api *HWApi) Auth(u, p string, accesslog ...bool) (*AuthToken, error) {
+	if len(accesslog) > 0 && accesslog[0] {
+
+		r, e := api.Request(&Request{
+			Method: GET,
+			Url:    authURL,
+			Headers: map[string]string{
+				"X-Auth-User":   "hwcdn-logstore:" + u,
+				"X-Auth-Key":    p,
+				"X-Application": "HWAPI-go",
+			},
+		})
+		if e != nil {
+			return nil, fmt.Errorf("get accesslog token for failed, %s", e.Error())
+		}
+
+		if api.AuthToken == nil {
+			api.AuthToken = &AuthToken{}
+		}
+		api.AuthToken.LogTokens = r.Headers.Get("X-Auth-Token")
+		return api.AuthToken, nil
+	}
 	r, e := api.Request(&Request{
 		Method: POST,
 		Url:    "/auth/token",
@@ -119,10 +142,10 @@ func (api *HWApi) Auth(u string, p string) (*AuthToken, error) {
 		return nil, e
 	}
 	return api.AuthToken, json.Unmarshal(r.body, &api.AuthToken)
+
 }
 
-//Set token
-//Check if token available, than set to AuthToken if available
+//SetToken Check if token available, than set to AuthToken if available
 func (api *HWApi) SetToken(t string) {
 	api.AuthToken.AccessToken = t
 }
