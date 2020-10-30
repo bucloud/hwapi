@@ -129,16 +129,13 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 		return nil, errors.New("This endpoint requires authentication")
 	}
 	if req.Header == nil {
-		req.Header = http.Header{
-			"X-Application":    []string{"GO-HWApi"},
-			"X-Application-Id": []string{"GO-HWApi"},
-			"User-Agent":       []string{"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1"},
-		}
-	} else {
-		req.Header.Set("X-Application", "GO-HWApi")
-		req.Header.Set("X-Application-Id", "GO-HWApi")
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1")
+		req.Header = http.Header{}
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Application", "GO-HWApi")
+	req.Header.Set("X-Application-Id", "GO-HWApi")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1")
+
 	if api.AuthToken != nil {
 		if !strings.Contains(req.URL.Host, "hcs.hwcdn") {
 			req.Header.Set("Authorization", strFirstToUpper(api.AuthToken.TokenType)+" "+api.AuthToken.AccessToken)
@@ -146,6 +143,7 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 			req.Header.Set("Accept", "application/json, text/plain, */*")
 		} else {
 			req.Header.Set("X-Auth-Token", api.AuthToken.LogTokens)
+			req.Header.Del("Content-Type")
 		}
 	}
 
