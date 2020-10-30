@@ -15,13 +15,13 @@ type AccessLogger struct {
 	ID int64 `json:"id,omitempty"`
 
 	// EnableCompression Enable gzip compression of access logs for this customer.
-	EnableCompression bool `json:"enableCompression," default:"1" role:"HWADMIN" writeonly:""`
+	EnableCompression *bool `json:"enableCompression," default:"1" role:"HWADMIN" writeonly:""`
 
 	// UploadToHCS Upload access logs for this customer directly to Highwinds Cloud Storage
-	UploadToHCS bool `json:"uploadToHCS," default:"1" role:"HWADMIN" writeonly:""`
+	UploadToHCS *bool `json:"uploadToHCS," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -42,7 +42,7 @@ type AccessLogs struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled <p>Enable flag for this configuration type.</p>
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -57,7 +57,7 @@ type AccessLogIPObfuscation struct {
 
 	// Enabled Enable IP address obfuscation of access logs for this customer. Complies with GDPR and obfuscates IPv4 addresses using /24 and IPv6 addresses using /96 bitmasks.
 	// WARNING: DO NOT TURN THIS OFF UNLESS WE GOT A CLEAR FROM LEGAL AND SECURITY TEAM
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -71,7 +71,7 @@ type AccessLogsConfig struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// ExtraLogFields <p>Comma delimited list of HTTP header fields to append to the standard fields in the access log. Each field must have the 'sc:' (server-to-client) or 'cs:' (client-to-server) prefix.</p>
 	// <p>Example: cs:Cookie, sc:x-custom-header</p>
@@ -89,7 +89,7 @@ type HostnameReporting struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enables reporting by hostname on a site.
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -103,10 +103,10 @@ type NrtReporting struct {
 	ID int64 `json:"id,omitempty"`
 
 	// ReportVHost Enable realtime reporting by hostname.
-	ReportVHost bool `json:"reportVHost,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	ReportVHost *bool `json:"reportVHost,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -120,7 +120,7 @@ type OriginPullLogs struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled <p>Enable flag for this configuration type.</p>
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -134,7 +134,7 @@ type OriginPullLogsConfig struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// ExtraLogFields Comma delimited list of HTTP header fields to append to the standard fields in the origin pull log. Each field must have the 'sc:' (server-to-client) or 'cs:' (client-to-server) prefix.
 	// <p>Example: cs:Cookie,sc:x-custom-header</p>
@@ -152,7 +152,7 @@ type ReceiptLogs struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enables receipt logs at the edge.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -166,7 +166,7 @@ type ReceiptLogsConfig struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// ExtraLogFields <p>Comma delimited list of HTTP header fields to append to the standard fields in the receipt access logs. Each field must have the 'sc:' (server-to-client) or 'cs:' (client-to-server) prefix.</p>
 	// <p>Example: cs:Cookie, sc:x-custom-header</p>
@@ -187,13 +187,13 @@ type RequestReceipt struct {
 	URIFormat string `json:"uriFormat," default:"" role:"HWADMIN" writeonly:""`
 
 	// VerifyCertificate Enable Cert Verification while doing SSL connection to Receipt Origin
-	VerifyCertificate bool `json:"verifyCertificate," default:"1" role:"HWADMIN" writeonly:""`
+	VerifyCertificate *bool `json:"verifyCertificate," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// AddIdToAccessLog The add receipt identifier to access logs setting allows you to track delivery receipts in your access logs. By enabling this,  the CDN caching servers will add the X-HW-Receipt Header to each receipt's corresponding Client Request Access Log entry. This is not referring to the Receipt Access Log entry. If this feature is enabled, the customer must have access logging enabled (see the Customer conf type).
-	AddIDToAccessLog bool `json:"addIdToAccessLog,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	AddIDToAccessLog *bool `json:"addIdToAccessLog,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// ClientResponseCodeFilter
 	ClientResponseCodeFilter string `json:"clientResponseCodeFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -245,7 +245,7 @@ type RequestReceiptReportPercentage struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -277,7 +277,7 @@ type AwsSignedS3PostV4 struct {
 	SecretAccessKey string `json:"secretAccessKey," default:"" role:"normal" writeonly:"" advancedType:"PASSWORD"`
 
 	// Enabled Set to true to enable policy.
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// AwsRegion AWS region scope the access key.
 	// see: https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
@@ -386,7 +386,7 @@ type AuthACL struct {
 	IPList string `json:"ipList," default:"" role:"normal" writeonly:"" list:"IP"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Protocol Protocol for which this policy applies.
 	Protocol string `json:"protocol,omitempty" default:"both" role:"normal" writeonly:"" enum:"[http,https,both]"`
@@ -420,7 +420,7 @@ type AuthGeo struct {
 	Values string `json:"values," default:"" role:"normal" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -444,7 +444,7 @@ type AuthHTTPBasic struct {
 	TTL uint32 `json:"ttl," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -464,7 +464,7 @@ type AuthReferer struct {
 	Referer string `json:"referer," default:"" role:"normal" writeonly:"" list:"GLOB"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -481,11 +481,11 @@ type AuthSignUrlsInPlaylist struct {
 	FilenamePatterns string `json:"filenamePatterns," default:"" role:"HWADMIN" writeonly:"" list:"GLOB"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// UseCookie When signing the playlist, put the token in Set-Cookie of the response instead of in the URL's inside the m3u8 file.
 	// NOTE: Currently, only the AKv2 signing is supported using Cookie, all other signing method will ignore this setting
-	UseCookie bool `json:"useCookie,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	UseCookie *bool `json:"useCookie,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -516,10 +516,10 @@ type AuthURLSign struct {
 	PassPhrase string `json:"passPhrase," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// IgnoreFieldsAfterToken Ignore the fields after the Token field when verifying the URL signature. (Default: false)
-	IgnoreFieldsAfterToken bool `json:"ignoreFieldsAfterToken,omitempty" default:"false" role:"normal" writeonly:""`
+	IgnoreFieldsAfterToken *bool `json:"ignoreFieldsAfterToken,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -571,10 +571,10 @@ type AuthURLSignAliCloudA struct {
 	PassPhrase string `json:"passPhrase," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// IncludeParamsBeforeToken Set to true when query string parameters listed before the token should be included when generating the signature hash.
-	IncludeParamsBeforeToken bool `json:"includeParamsBeforeToken,omitempty" default:"false" role:"normal" writeonly:""`
+	IncludeParamsBeforeToken *bool `json:"includeParamsBeforeToken,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -617,7 +617,7 @@ type AuthURLSignAliCloudB struct {
 	PassPhrase string `json:"passPhrase," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -657,7 +657,7 @@ type AuthURLSignAliCloudC struct {
 	PassPhrase string `json:"passPhrase," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -706,7 +706,7 @@ type AuthURLSignHmacTlu struct {
 	SymmetricKeyIDMap string `json:"symmetricKeyIdMap," default:"" role:"normal" writeonly:"1" hashMap:"string,string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -753,7 +753,7 @@ type AuthURLSignIq struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -811,7 +811,7 @@ type AuthURLAsymmetricSignTlu struct {
 	PublicKeyIDMap string `json:"publicKeyIdMap," default:"" role:"normal" writeonly:"1" hashMap:"string,string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -878,16 +878,16 @@ type AuthURLSignL3 struct {
 	TokenField string `json:"tokenField," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// IncludeProtocolAndHost Indicates whether or not to include both the Protocol and Host when calculating the signature.
-	IncludeProtocolAndHost bool `json:"includeProtocolAndHost,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	IncludeProtocolAndHost *bool `json:"includeProtocolAndHost,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// InjectClientIPAddress Indicates whether or not to include the Client's IP address when calculating the signature.
-	InjectClientIPAddress bool `json:"injectClientIPAddress,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	InjectClientIPAddress *bool `json:"injectClientIPAddress,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// IncludeHostOnly Indicates whether or not to include the Host without the request Protocol when calculating the signature.
-	IncludeHostOnly bool `json:"includeHostOnly,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	IncludeHostOnly *bool `json:"includeHostOnly,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// TimeFormat Used to describe the format of expireField and startField. The CDN currently supports two formats.
 	//   1. epoch: An integer representing the number of seconds since January 1, 1970 on a UNIX/POSIX system.
@@ -941,7 +941,7 @@ type AuthURLSignAKv1 struct {
 	Salt string `json:"salt," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -984,13 +984,13 @@ type AuthURLSignAKv2 struct {
 	PassPhrase string `json:"passPhrase," default:"" role:"HWADMIN" writeonly:""`
 
 	// MatchURL Add the path portion of the URL (e.g., /path/to/file.txt) into the token before hashing.
-	MatchURL bool `json:"matchURL," default:"1" role:"HWADMIN" writeonly:""`
+	MatchURL *bool `json:"matchURL," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// EnableACLWildcard This allows you to enable the use of wildcard matches in your ACL list.
-	EnableACLWildcard bool `json:"enableACLWildcard," default:"1" role:"HWADMIN" writeonly:""`
+	EnableACLWildcard *bool `json:"enableACLWildcard," default:"1" role:"HWADMIN" writeonly:""`
 
 	// AclDelimiter This is the delimiter used to separate the IP addresses in the ACL list.
 	ACLDelimiter string `json:"aclDelimiter,omitempty" default:"!" role:"HWADMIN" writeonly:"" advancedType:"char"`
@@ -1042,7 +1042,7 @@ type AuthURLSignLMV struct {
 	Secret string `json:"secret," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -1100,10 +1100,10 @@ type AuthVhostLockout struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Lockout By enabling this checkbox your content is only accessible through one of your configured Hostnames.
-	Lockout bool `json:"lockout," default:"false" role:"HWADMIN" writeonly:""`
+	Lockout *bool `json:"lockout," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1123,7 +1123,7 @@ type BandWidthLimit struct {
 	Values string `json:"values," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1137,7 +1137,7 @@ type BandwidthRateLimit struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// InitialBurstUnits The units used by the initial burst parameter on the URL.
 	InitialBurstUnits string `json:"initialBurstUnits,omitempty" default:"byte" role:"normal" writeonly:"" enum:"[byte,kilobyte]"`
@@ -1183,7 +1183,7 @@ type BandWidthRateLimitUnits struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Initial Deprecated By bandwidthRateLimit/initialBurstUnits
 	Initial string `json:"initial,omitempty" default:"byte" role:"normal" writeonly:"" enum:"[byte,kilobyte]"`
@@ -1206,7 +1206,7 @@ type ClientAccess struct {
 	Policy string `json:"policy," default:"" role:"HWADMIN" writeonly:"" advancedType:"text"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1220,7 +1220,7 @@ type Compression struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Level
 	// The level of compression for requested compressed files. Acceptable values are 0 to 6. 0 is no compression, 1 is high speed, 6 is high compression. The default is 6. If an invalid number is chosen, we will use the default.
@@ -1251,10 +1251,10 @@ type ContentDispositionByURL struct {
 	DispositionTypeQSParam string `json:"dispositionTypeQSParam," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// OverrideOriginHeader This setting allow the CDN-generated Content-Disposition header to override the one preserved from the origin using the OriginPullPolicy/HttpHeaders or Origin/OriginCacheHeaders settings.
-	OverrideOriginHeader bool `json:"overrideOriginHeader," default:"1" role:"normal" writeonly:""`
+	OverrideOriginHeader *bool `json:"overrideOriginHeader," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1277,10 +1277,10 @@ type ContentDispositionByHeader struct {
 	HeaderFieldName string `json:"headerFieldName," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// OverrideOriginHeader This allow the CDN-generated Content-Disposition header to override the one preserved from the origin using the OriginPullPolicy/HttpHeaders or Origin/OriginCacheHeaders settings.
-	OverrideOriginHeader bool `json:"overrideOriginHeader," default:"1" role:"normal" writeonly:""`
+	OverrideOriginHeader *bool `json:"overrideOriginHeader," default:"1" role:"normal" writeonly:""`
 
 	// DefaultType The default Content-Disposition type when the header is enabled
 	DefaultType string `json:"defaultType,omitempty" default:"attachment" role:"normal" writeonly:"" enum:"[attachment,inline]"`
@@ -1317,10 +1317,10 @@ type CookieBehavior struct {
 	ID int64 `json:"id,omitempty"`
 
 	// AllowCachingSetCookie The actual preserving header is controlled by OriginPullPolicy/HttpHeaders. This option is mainly for when the OriginPullPolicy/HttpHeaders is set to '*', we want to treat the Set-Cookie hearder differently from other headers as OriginpullPolicy doesn't allow generic glob or negative matching. Set-Cookie can be proxied to the client when dudupping is disabled when we proxy all the headers through; otherwise, we will not store the Set-Cookie header in edgefile, so it cannot be sent from cache or deduping when this setting is disabled.
-	AllowCachingSetCookie bool `json:"allowCachingSetCookie," default:"false" role:"HWADMIN" writeonly:""`
+	AllowCachingSetCookie *bool `json:"allowCachingSetCookie," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -1373,7 +1373,7 @@ type CrossDomain struct {
 	File string `json:"file," default:"" role:"HWADMIN" writeonly:"" advancedType:"text"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1390,7 +1390,7 @@ type CustomMimeType struct {
 	ExtensionMap string `json:"extensionMap," default:"" role:"normal" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -1427,7 +1427,7 @@ type DNSIPv6 struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enable Enable IPv6 DNS records for this host.
-	Enable bool `json:"enable," default:"false" role:"HWADMIN" writeonly:""`
+	Enable *bool `json:"enable," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1447,7 +1447,7 @@ type DNSOverride struct {
 	Answer string `json:"answer," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1473,7 +1473,7 @@ type DynamicCacheRule struct {
 	StatusCode uint32 `json:"statusCode," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -1513,7 +1513,7 @@ type Flv struct {
 	InitByteSize uint32 `json:"initByteSize," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1527,7 +1527,7 @@ type FlvPseudoStreaming struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1550,10 +1550,10 @@ type General struct {
 	ID int64 `json:"id,omitempty"`
 
 	// AllowZeroByteFile The allow zero byte files policy enables the caching of zero byte files (empty files) on the  caching servers.
-	AllowZeroByteFile bool `json:"allowZeroByteFile," default:"false" role:"HWADMIN" writeonly:""`
+	AllowZeroByteFile *bool `json:"allowZeroByteFile," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1570,7 +1570,7 @@ type HTTPMethods struct {
 	PassThru string `json:"passThru," default:"" role:"normal" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1584,7 +1584,7 @@ type LegacyXdomain struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled When enabled, the CDN supports the use of the Client Access and Cross Domain policies.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1598,10 +1598,10 @@ type LiveStreaming struct {
 	ID int64 `json:"id,omitempty"`
 
 	// EnablePlaylistOptimization If enabled, extra check will be performat to make sure playlist file doesn't get cached for too long
-	EnablePlaylistOptimization bool `json:"enablePlaylistOptimization," default:"false" role:"HWADMIN" writeonly:""`
+	EnablePlaylistOptimization *bool `json:"enablePlaylistOptimization," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// PathFilter Path Filter is used to determine if this type should be applied or not based on Expression Provide.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy.  By default the
@@ -1632,7 +1632,7 @@ type PreserveRedirectHost struct {
 	StatusCodes string `json:"statusCodes," default:"" role:"HWADMIN" writeonly:"" list:"uint32"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1646,7 +1646,7 @@ type QueryStrParam struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1699,7 +1699,7 @@ type RedirectExceptions struct {
 	RedirectAgentCode string `json:"redirectAgentCode," default:"" role:"normal" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1719,7 +1719,7 @@ type RedirectMappings struct {
 	Code uint32 `json:"code," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -1756,10 +1756,10 @@ type ResponseHeader struct {
 	ID int64 `json:"id,omitempty"`
 
 	// EnableETag Enables the e-tag header on client responses from the CDN.
-	EnableETag bool `json:"enableETag," default:"1" role:"normal" writeonly:""`
+	EnableETag *bool `json:"enableETag," default:"1" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1780,7 +1780,7 @@ type RobotsTxt struct {
 	File string `json:"file," default:"" role:"normal" writeonly:"" advancedType:"text"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -1817,7 +1817,7 @@ type StaticHeader struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -1861,7 +1861,7 @@ type StreamChunkedEncodingResponse struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enabled Chunked-Encoding response in dedup queue if needed.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -1875,7 +1875,7 @@ type TimePseudoStreaming struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1895,7 +1895,7 @@ type HTTP2Support struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enable support of HTTP/2.
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// PopFilter POP filter is list of pattern to match POPs where Policy needs to applied.
 	// Optionally, you may use an exclamation point in the list to describe the subset of POPs excluded from this policy.
@@ -1921,7 +1921,7 @@ type OcspParsing struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enable OCSP Support
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -1979,7 +1979,7 @@ type Hostname struct {
 	Domain string `json:"domain," default:"" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -1993,7 +1993,7 @@ type BlockingOriginPullMode struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enable blocking origin pull feature.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -2007,7 +2007,7 @@ type CustomHeader struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -2030,7 +2030,7 @@ type DynamicOrigin struct {
 	QueryParam string `json:"queryParam," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// AllowedDomains Provide an exclusive list of domains allowed as dynamic origins in the policy.  When this is not set, all domain names are allowed.
 	AllowedDomains string `json:"allowedDomains,omitempty" default:"" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -2047,7 +2047,7 @@ type FailSafeOriginPull struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Flag for enabling the Fail Safe Origin Pull Feature.
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// StatusCodeMatch Comma separated status code glob patterns to indicate which status code this policy apply to.
 	// This list will only accept error response code (4xx and 5xx).
@@ -2079,7 +2079,7 @@ type FarAheadRangeProxy struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Flag for enabling the Far Ahead Range Proxy Feature
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// ThresholdBytes When a range request is requesting a byte range that is beyond the threshold bytes from the current full download offset. The range request will get proxy straight to the origin to provide better user experience. This feature is irrelevant when FileSegmentation is enabled as we will pull the required segment sized range and cache the segment to full fill the range request.
 	ThresholdBytes uint32 `json:"thresholdBytes," default:"" role:"normal" writeonly:""`
@@ -2096,7 +2096,7 @@ type FileSegmentation struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// InitialOriginRequestBehavior Specifies how the CDN requests assets from the origin by default for assets in this scope when fileSegmentation/enabled is true. Range: The CDN makes a GET request with a Range for the first segment, bytes 0 through <segment_size> - 1. The CDN retries with a full-file request if the range request fails.  Full: The CDN makes a GET request for the full/entire asset (i.e. no Range).  If the asset can be segmented, the CDN halts the download once <segment_size> bytes have been ingested and closes the connection.   The variable segment_size is globally defined by the CDN.  Once the CDN determines an asset is segmentable, it uses Range requests for all additonal segments regardless of the initial origin request type.
 	InitialOriginRequestBehavior string `json:"initialOriginRequestBehavior,omitempty" default:"full" role:"HWADMIN" writeonly:"" enum:"[range,full]"`
@@ -2122,7 +2122,7 @@ type VaryHeaderField struct {
 	ValuesFilter string `json:"valuesFilter," default:"" role:"HWADMIN" writeonly:"" list:"IGLOB"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// ProxyBehavior Define how the CDN proxies the Vary header from the origin to an end-user. whole: send the entire Vary header as-is regardless if the CDN used it for dynamic caching (similar to OriginPullPolicy/HttpHeaders)  filtered: send only the values from the origin Vary header that the CDN actually used (which is a product from the valuesFilter, the Vary origin header and the headers in the client request) none: do not proxy any of the Vary header regardless if it was used for dynamic caching Note, this policy takes precendence over OriginPullPolicy/HttpHeaders
 	ProxyBehavior string `json:"proxyBehavior,omitempty" default:"filtered" role:"HWADMIN" writeonly:"" enum:"[whole,filtered,none]"`
@@ -2139,7 +2139,7 @@ type GzipOriginPull struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -2153,7 +2153,7 @@ type OriginPersistentConnections struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -2167,16 +2167,16 @@ type OriginPull struct {
 	ID int64 `json:"id,omitempty"`
 
 	// NoQSParams Enables the CDN to send only a path without query string parameters when making external origin requests.
-	NoQSParams bool `json:"noQSParams,omitempty" default:"false" role:"normal" writeonly:""`
+	NoQSParams *bool `json:"noQSParams,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// PassAllHeadersOnDedup Enabling this feature instructs the CDN to proxy all the headers from the client HTTP request the  CDN is using to dedup an origin pull. Consider static header injection and other similar features which may cause duplicates or conflicts.
-	PassAllHeadersOnDedup bool `json:"passAllHeadersOnDedup,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	PassAllHeadersOnDedup *bool `json:"passAllHeadersOnDedup,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// TransparentMode When set to true, it will preserve the original Host header and Path from the client's request when going to the shielding GFS and the origin.
-	TransparentMode bool `json:"transparentMode,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	TransparentMode *bool `json:"transparentMode,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// DefaultBehavior <p>This setting changes the default origin pull behavior which by default is to always DEDUP.</p>
 	// <p><b>NOCACHE:</b> assume the no-cache/no-store behavior until we found out otherwise from the origin.
@@ -2209,7 +2209,7 @@ type OriginPullProtocol struct {
 	Protocol string `json:"protocol," default:"" role:"normal" writeonly:"" enum:"[http,https,match]"`
 
 	// EnableSNI If enabled, CDN will use SNI while making secured connection to origin
-	EnableSNI bool `json:"enableSNI," default:"1" role:"normal" writeonly:""`
+	EnableSNI *bool `json:"enableSNI," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -2243,7 +2243,7 @@ type OriginPullShield struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled This enables origin shielding.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// PermissibleShieldInternalErrors Control how the Edge PoP handles errors experienced by a shielding PoP before it receives a full response from an external origin.
 	PermissibleShieldInternalErrors string `json:"permissibleShieldInternalErrors,omitempty" default:"CONNECTION_ONLY" role:"HWADMIN" writeonly:"" enum:"[NONE,CONNECTION_ONLY,WRITE_ONLY,WRITE_READ,ALL]"`
@@ -2263,7 +2263,7 @@ type OriginRoundRobinDNS struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Flag for turning on the Round Robin DNS feature.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Host Origin from OriginPullHost for which this policy applies. '*' indicates all origin hosts.
 	Host string `json:"host," default:"" role:"HWADMIN" writeonly:""`
@@ -2327,7 +2327,7 @@ type AwsSignedOriginPullV4 struct {
 	SecretAccessKey string `json:"secretAccessKey," default:"" role:"normal" writeonly:"" advancedType:"PASSWORD"`
 
 	// Enabled Set to true to enable policy.
-	Enabled bool `json:"enabled," default:"false" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"normal" writeonly:""`
 
 	// AwsRegion AWS region scope the access key.
 	// see: https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
@@ -2430,7 +2430,7 @@ type UploadLimit struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -2473,16 +2473,16 @@ type Waf struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled If enabled, origin requests are proxied through Web Application Firewall before reaching the real origin.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// StandAloneMode If enabled, all traffic going through the CDN will be in straight proxy mode. This is for customer who wants WAF only without CDN;
 	// however, we want to protect the WAF infrastructure behind the CDN.
-	StandAloneMode bool `json:"standAloneMode,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	StandAloneMode *bool `json:"standAloneMode,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// FailoverToOrigin This setting determines what should be the behavior for the CDN when WAF is not available.  When it's set to true,
 	// the CDN will try to fulfill the request by falling back to the origin directly without going through WAF. Otherwise,
 	// the CDN will return error directly to the end user without going the origin.
-	FailoverToOrigin bool `json:"failoverToOrigin,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	FailoverToOrigin *bool `json:"failoverToOrigin,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -2547,7 +2547,7 @@ type WafClustersOverride struct {
 	ServerList string `json:"serverList," default:"" role:"HWADMIN" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -2602,10 +2602,10 @@ type XForwardedForBehavior struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// FollowHttpSpec The legacy behavior for the CDN is to ignore the X-Forwarded-For from clients.   The CDN assumes/treats the client as the end-user. The CDN uses the IP address of  the TCP connection used by the client, which may or may not be the actual end-user.  It could be a a proxy instead. The CDN uses this IP address to generate its outgoing  X-Forwarded-For in origin and/or auth requests. The CDN also uses this IP address  for reporting, Geo Location, etc.   By setting this to true, the CDN processes and creates the X-Forwarded-For in accordance  with the HTTP spec, where the left-most IP address in the list is that of the end-user.  The CDN proxies a received X-Forwarded-For after appending the IP address of the  connected client/proxy.
-	FollowHTTPSpec bool `json:"followHttpSpec,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	FollowHTTPSpec *bool `json:"followHttpSpec,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -2654,7 +2654,7 @@ type WebSocket struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enable WebSocket support for the scope.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// PopFilter POP filter is list of pattern to match POPs where Policy needs to applied.
 	// Optionally, you may use an exclamation point in the list to describe the subset of POPs excluded from this policy.
@@ -2705,13 +2705,13 @@ type CacheControl struct {
 	ID int64 `json:"id,omitempty"`
 
 	// SynchronizeMaxAge Enables the synchronization of the edge cache with browser cache, such that content will expire from the browser at the same time it does from the edge.
-	SynchronizeMaxAge bool `json:"synchronizeMaxAge," default:"1" role:"normal" writeonly:""`
+	SynchronizeMaxAge *bool `json:"synchronizeMaxAge," default:"1" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
 	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MustRevalidate If set to true, cacheControl must-revalidate header is added by CDN if sending its own cache-control headers.
-	MustRevalidate bool `json:"mustRevalidate,omitempty" default:"false" role:"normal" writeonly:""`
+	MustRevalidate *bool `json:"mustRevalidate,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// MaxAge Time in seconds browsers should cache content. Sets the Max-Age: HTTP header in cache responses. No default if not set (Max-Age will be set according to the cache policy). Accepts 'd' for day, 'h' for hour and 'm' for minute at the end of the number.
 	MaxAge int32 `json:"maxAge,omitempty" default:"-1" role:"normal" writeonly:"" range:"-1,31536000"`
@@ -2734,10 +2734,10 @@ type CacheKeyModification struct {
 	ID int64 `json:"id,omitempty"`
 
 	// NormalizeKeyPathToLowerCase When set, the path portion of the cache key will be normalized to lower case. So a client request or a purge for /PaTh/To/File.TxT will have a cache key of /path/to/file.txt. We will still pass the original request through to the origin, unaltered. This only applies to the path NOT the query string.
-	NormalizeKeyPathToLowerCase bool `json:"normalizeKeyPathToLowerCase," default:"false" role:"normal" writeonly:""`
+	NormalizeKeyPathToLowerCase *bool `json:"normalizeKeyPathToLowerCase," default:"false" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -2751,7 +2751,7 @@ type DynamicContent struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -2795,7 +2795,7 @@ type OriginPullCacheExtension struct {
 	ExpiredCacheExtension int32 `json:"expiredCacheExtension," default:"" role:"normal" writeonly:"" range:"0,31536000"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// OriginUnreachableCacheExtension This is the max time period we will serve from cache when we cannot get the file from the origin.
 	OriginUnreachableCacheExtension int32 `json:"originUnreachableCacheExtension,omitempty" default:"86400" role:"normal" writeonly:"" range:"0,31536000"`
@@ -2827,38 +2827,38 @@ type OriginPullPolicy struct {
 
 	// ForceBypassCache <p>Force this asset to bypass the cache. Typical use case is to turn this on for certain status code like 403, 404 ...etc using the statusCodeMatch key, so it won't bust our cache.</p>
 	// <p>NOTE: This feature only applies for no-cache asset or OriginPull/DefaultBehavior is set to NOCACHE.</p>
-	ForceBypassCache bool `json:"forceBypassCache,omitempty" default:"false" role:"normal" writeonly:""`
+	ForceBypassCache *bool `json:"forceBypassCache,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// MaxAgeZeroToNoCache Add on no-cache when maxage=0.
-	MaxAgeZeroToNoCache bool `json:"maxAgeZeroToNoCache,omitempty" default:"false" role:"normal" writeonly:""`
+	MaxAgeZeroToNoCache *bool `json:"maxAgeZeroToNoCache,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// MustRevalidateToNoCache Behave like no-cache when must-revalidate is present in the Cache-Control header.
-	MustRevalidateToNoCache bool `json:"mustRevalidateToNoCache,omitempty" default:"false" role:"normal" writeonly:""`
+	MustRevalidateToNoCache *bool `json:"mustRevalidateToNoCache,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// HonorMustRevalidate Honor must-revalidate or proxy-revalidate cache-control from origin.
-	HonorMustRevalidate bool `json:"honorMustRevalidate,omitempty" default:"false" role:"normal" writeonly:""`
+	HonorMustRevalidate *bool `json:"honorMustRevalidate,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// HonorNoCache Honor no-cache cache-control from origin.
-	HonorNoCache bool `json:"honorNoCache,omitempty" default:"false" role:"normal" writeonly:""`
+	HonorNoCache *bool `json:"honorNoCache,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// HonorNoStore Honor no-store cache-control from origin.
-	HonorNoStore bool `json:"honorNoStore,omitempty" default:"false" role:"normal" writeonly:""`
+	HonorNoStore *bool `json:"honorNoStore,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// HonorPrivate Honor private cache-control from origin.
-	HonorPrivate bool `json:"honorPrivate,omitempty" default:"false" role:"normal" writeonly:""`
+	HonorPrivate *bool `json:"honorPrivate,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// HonorSMaxAge Honor s-maxage cache-control from origin.
-	HonorSMaxAge bool `json:"honorSMaxAge,omitempty" default:"false" role:"normal" writeonly:""`
+	HonorSMaxAge *bool `json:"honorSMaxAge,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// UpdateHttpHeadersOn304Response Update the cached origin headers in cache when there is a newer value in a 304 response from the origin. To remove existing cached headers, the response from origin must contain the header key with an empty value.
-	UpdateHTTPHeadersOn304Response bool `json:"updateHttpHeadersOn304Response,omitempty" default:"false" role:"normal" writeonly:""`
+	UpdateHTTPHeadersOn304Response *bool `json:"updateHttpHeadersOn304Response,omitempty" default:"false" role:"normal" writeonly:""`
 
 	// EnableOPShieldForNoCache <p>Set to false to override the origin shielding setting when the cache-control is no-cache.</p>
 	// <p>NOTE: This feature only applies for no-cache asset.</p>
-	EnableOPShieldForNoCache bool `json:"enableOPShieldForNoCache," default:"1" role:"HWADMIN" writeonly:""`
+	EnableOPShieldForNoCache *bool `json:"enableOPShieldForNoCache," default:"1" role:"HWADMIN" writeonly:""`
 
 	// NoCacheBehavior Specify between the legacy or the spec behavior. The legacy behavior is to just treat the asset as always expired. The spec behavior is un-dedup the queue and proxy the headers from the client directly to the origin.
 	NoCacheBehavior string `json:"noCacheBehavior,omitempty" default:"legacy" role:"normal" writeonly:"" enum:"[legacy,spec]"`
@@ -2911,16 +2911,16 @@ type ClientRequestQueue struct {
 	ScriptPath string `json:"scriptPath," default:"" role:"HWADMIN" writeonly:""`
 
 	// SendRequestBody Boolean flag for indicating whether the CDN Caching Server needs to send the body provided in a Client request to the Script Engine.
-	SendRequestBody bool `json:"sendRequestBody,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	SendRequestBody *bool `json:"sendRequestBody,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// QuitOnError Indicates whether GFS should quit processing a request if this script fails or is unable to execute.
-	QuitOnError bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	QuitOnError *bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// ProvideIPGeoInfo This is a flag for indicating whether or not the script requires Geographic IP information. (Default: false)
-	ProvideIPGeoInfo bool `json:"provideIPGeoInfo,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	ProvideIPGeoInfo *bool `json:"provideIPGeoInfo,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// IpListAccessCode This is used as a variable in a script for controlling how an ACL is applied. If set to allow, the ACL is treated as a white-list.  If set to deny, the ACL is treated as a black-list (Default: allow).
 	// NOTE: This is NOT a base functionality provided by all scripts.  It must be written into each customer script.  Check with the script author prior to using this key.
@@ -2973,10 +2973,10 @@ type ClientResponseQueue struct {
 	ScriptPath string `json:"scriptPath," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// QuitOnError This value instructs the CDN to terminate the processing of the request on all script failures.
-	QuitOnError bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	QuitOnError *bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// LogLevel This determines the level of script engine logging done for the queue. It is useful for debugging script  engine failures when developing new scripts.
 	LogLevel string `json:"logLevel,omitempty" default:"error" role:"HWADMIN" writeonly:"" enum:"[debug,info,warning,error,crit]"`
@@ -3016,7 +3016,7 @@ type ClientKeepAlive struct {
 	Timeout int32 `json:"timeout," default:"" role:"HWADMIN" writeonly:"" range:"-1,300"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// HeaderFilter Header Filter is used to determine if this type should be applied or not based on Expression Provide. Expressions are match against request headers.
 	// This is a list of patterns that are used to describe a subset of requests that are included (or optionally excluded) by this policy. By default the
@@ -3080,10 +3080,10 @@ type ConsistentHashing struct {
 	DefaultLoadBalanceHosts string `json:"defaultLoadBalanceHosts," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// EnableSidewayPulling Pull the file from the primary edge in the same pop
-	EnableSidewayPulling bool `json:"enableSidewayPulling," default:"1" role:"HWADMIN" writeonly:""`
+	EnableSidewayPulling *bool `json:"enableSidewayPulling," default:"1" role:"HWADMIN" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -3123,7 +3123,7 @@ type H2proxyCaching struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled This is a HWADMIN control variable, if disabled, to force H2Proxy to NOT cache assets in memory even if memoryCacheable policy indicates it should.
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3137,16 +3137,16 @@ type Customer struct {
 	ID int64 `json:"id,omitempty"`
 
 	// CompressAccessLogs Enable gzip compression of access logs for this customer.
-	CompressAccessLogs bool `json:"compressAccessLogs," default:"1" role:"HWADMIN" writeonly:""`
+	CompressAccessLogs *bool `json:"compressAccessLogs," default:"1" role:"HWADMIN" writeonly:""`
 
 	// OpLogs Should origin pull logging be enabled for this customer.
-	OpLogs bool `json:"opLogs,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	OpLogs *bool `json:"opLogs,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// ReceiptLogs Should receipt access logging be enabled for this customer (see RequestReceipt).
-	ReceiptLogs bool `json:"receiptLogs,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	ReceiptLogs *bool `json:"receiptLogs,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// UploadAccessLogsToHCS Upload access logs for this customer directly to Highwinds Cloud Storage
-	UploadAccessLogsToHCS bool `json:"uploadAccessLogsToHCS," default:"1" role:"HWADMIN" writeonly:""`
+	UploadAccessLogsToHCS *bool `json:"uploadAccessLogsToHCS," default:"1" role:"HWADMIN" writeonly:""`
 
 	// ReceiptLogFields Comma delimited list of HTTP header fields to append to the standard fields in the Receipt Access log. Each field must have the 'sc:' (server-to-client) or 'cs:' (client-to-server) prefix.
 	// NOTE: the colon (:) is required.
@@ -3182,10 +3182,10 @@ type DeviceBasedDynamicContent struct {
 	MobileDevicePattern string `json:"mobileDevicePattern," default:"" role:"HWADMIN" writeonly:"" advancedType:"REGEX"`
 
 	// PassToOrigin A flag that tells the CDN to pass through the DEVICE parameter to the origin.
-	PassToOrigin bool `json:"passToOrigin,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	PassToOrigin *bool `json:"passToOrigin,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"HWADMIN" writeonly:"" list:"GLOB"`
@@ -3222,7 +3222,7 @@ type HashType struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"normal" writeonly:""`
@@ -3239,7 +3239,7 @@ type InternalError struct {
 	MaxAge string `json:"maxAge," default:"" role:"HWADMIN" writeonly:"" advancedType:"ttl"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3262,7 +3262,7 @@ type LanguageRedirect struct {
 	HTTPCode uint16 `json:"httpCode," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3277,7 +3277,7 @@ type MidTierCaching struct {
 
 	// Enabled Enable Mid Tier Caching
 	// WARNING: When using this feature to pull content from a sister pop, popFilter has to be set! WARNING: DO NOT ENABLE THIS SETTING BEFORE CONSULTING WITH THE DEV AND SYSENG TEAM!
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Protocol The protocol used to communicate with the Mid Tier Cache server. 'match' will use the same protocol from the end user request.
 	Protocol string `json:"protocol," default:"" role:"HWADMIN" writeonly:"" enum:"[http,https,match]"`
@@ -3310,13 +3310,13 @@ type OriginRequestQueue struct {
 	ScriptPath string `json:"scriptPath," default:"" role:"HWADMIN" writeonly:""`
 
 	// SendRequestBody Boolean flag for indicating whether the CDN Caching Server needs to send the body of the Origin request to the Script Engine.
-	SendRequestBody bool `json:"sendRequestBody,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	SendRequestBody *bool `json:"sendRequestBody,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// QuitOnError This indicates the behavior of the caching server on script errors.  When selected, the caching server issues a 500 HTTP response code to an end user if a request failed to properly execute the script  designated by this policy.  If this option is unselected, the caching server ignores the script errors and continues processing the request.
-	QuitOnError bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	QuitOnError *bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// LogLevel This determines the level of script engine logging done for the queue.  It is useful for debugging script engine failures when developing new scripts.
 	LogLevel string `json:"logLevel,omitempty" default:"error" role:"HWADMIN" writeonly:"" enum:"[debug,info,warning,error,crit]"`
@@ -3359,10 +3359,10 @@ type OriginResponseQueue struct {
 	ScriptPath string `json:"scriptPath," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// QuitOnError This indicates the behavior of the caching server on script errors.  When selected, the caching server issues a 500 HTTP response code to an end user if a request failed to properly execute the script  designated by this policy.  If this option is unselected, the caching server ignores script errors and continues processing the request.
-	QuitOnError bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	QuitOnError *bool `json:"quitOnError,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// LogLevel This determines the level of script engine logging done for the queue.  This is useful for debugging script engine failures when developing new scripts.
 	LogLevel string `json:"logLevel,omitempty" default:"error" role:"HWADMIN" writeonly:"" enum:"[debug,info,warning,error,crit]"`
@@ -3409,16 +3409,16 @@ type PathModification struct {
 	Replacement string `json:"replacement," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// IncludeQSParamInPath Include the Query String parameters in the path for matching.
-	IncludeQSParamInPath bool `json:"includeQSParamInPath,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	IncludeQSParamInPath *bool `json:"includeQSParamInPath,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// CaseInsensitiveMatch Use case insensitive regex match
-	CaseInsensitiveMatch bool `json:"caseInsensitiveMatch,omitempty" default:"false" role:"HWADMIN" writeonly:""`
+	CaseInsensitiveMatch *bool `json:"caseInsensitiveMatch,omitempty" default:"false" role:"HWADMIN" writeonly:""`
 
 	// EscapeSlashCharacter Whether or not to escape the slash character in the regular expression.  Turn this off if you will escape this character yourself in the regular expression below.
-	EscapeSlashCharacter bool `json:"escapeSlashCharacter," default:"1" role:"HWADMIN" writeonly:""`
+	EscapeSlashCharacter *bool `json:"escapeSlashCharacter," default:"1" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3435,7 +3435,7 @@ type ScriptNegCaching struct {
 	StatusCodes string `json:"statusCodes," default:"" role:"HWADMIN" writeonly:"" list:"string"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// OriginHeaderOverride Pipe delimited ('|') list of headers to overwrite or insert in the origin response prior to the processing it on the caching server
 	OriginHeaderOverride string `json:"originHeaderOverride,omitempty" default:"" role:"HWADMIN" writeonly:"" list:"string"`
@@ -3455,7 +3455,7 @@ type ServerlessScripting struct {
 	ScriptID string `json:"scriptId," default:"" role:"HWADMIN" writeonly:""`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"HWADMIN" writeonly:""`
 
 	// PopFilter POP filter is list of pattern to match POPs where Policy needs to applied.
 	// Optionally, you may use an exclamation point in the list to describe the subset of POPs excluded from this policy.
@@ -3498,7 +3498,7 @@ type TossbackBypass struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enables the bypass of BTP tossbacks between the caching server and Doppler.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3512,7 +3512,7 @@ type CloseHalfOpenConnections struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Force the close of client connections upon receiving TCP FIN from clients.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3526,7 +3526,7 @@ type TossbackAlways struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Force the tossback of connections from the caching server to Doppler.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// Comment Explain to other users why you are making this change
 	Comment string `json:"comment,omitempty" default:"" role:"HWADMIN" writeonly:""`
@@ -3540,7 +3540,7 @@ type Rti struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Enable use of premium versus commodity (versus other-future-hybrid-approaches) routing.
-	Enabled bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
+	Enabled *bool `json:"enabled," default:"false" role:"HWADMIN" writeonly:""`
 
 	// TableNumber What table number will be used by gfs to deliver certain file.
 	TableNumber uint32 `json:"tableNumber," default:"" role:"HWADMIN" writeonly:""`
@@ -3592,7 +3592,7 @@ type ClientRequestModification struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// FlowControl <p>When multiple policies are defined, flow control describe how we want to process next policies. If client request was modified we apply other policies based on flow control.</p>
 	// <p><b>Next</b> - This is default, continue processing next policy</p>
@@ -3654,7 +3654,7 @@ type ClientResponseModification struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// FlowControl <p>When multiple policies are defined, flow control describe how we want to process next policies. If client request was modified we apply other policies based on flow control.</p>
 	// <p><b>Next</b> - This is default, continue processing next policy</p>
@@ -3713,7 +3713,7 @@ type OriginRequestModification struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// MethodFilter
 	MethodFilter string `json:"methodFilter,omitempty" default:"*" role:"normal" writeonly:"" list:"GLOB"`
@@ -3765,7 +3765,7 @@ type OriginResponseModification struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Enabled Generic Enabled Flag for all Config Types
-	Enabled bool `json:"enabled," default:"1" role:"normal" writeonly:""`
+	Enabled *bool `json:"enabled," default:"1" role:"normal" writeonly:""`
 
 	// FlowControl <p>When multiple policies are defined, flow control describe how we want to process next policies. If client request was modified we apply other policies based on flow control.</p>
 	// <p><b>Next</b> - This is default, continue processing next policy</p>
@@ -4137,7 +4137,15 @@ func setDefault(v interface{}, d ...interface{}) {
 		case reflect.Interface:
 			// include nil value
 			// fmt.Printf("%v", rc.Field(r).Elem())
-		case reflect.Ptr, reflect.Struct:
+		case reflect.Ptr:
+			if b, f := rt.Field(r).Tag.Lookup("default"); f && rc.Field(r).Type().String() == "*bool" {
+				if fv, fe := strconv.ParseBool(b); fe == nil && rc.Field(r).IsNil() {
+					rc.Field(r).Set(reflect.ValueOf(&fv))
+				}
+			} else {
+				setDefault(rc.Field(r).Interface())
+			}
+		case reflect.Struct:
 			setDefault(rc.Field(r).Interface())
 		case reflect.Float32:
 			if b, f := rt.Field(r).Tag.Lookup("default"); f && rc.Field(r).IsZero() {
