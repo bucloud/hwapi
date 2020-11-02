@@ -7,12 +7,12 @@ import (
 )
 
 type HWApi struct {
-	hc                 *http.Transport
-	AuthToken          *AuthToken
-	authInfo           *authInfo
-	CurrentUser        *User
-	cache              *fastcache.Cache
-	downloadConcurrent uint
+	hc                  *http.Transport
+	AuthToken           *AuthToken
+	authInfo            *authInfo
+	CurrentUser         *User
+	cache               *fastcache.Cache
+	downloadConcurrency uint
 }
 
 const (
@@ -28,8 +28,8 @@ func init() {
 //Default timeout is 30s and maxConns is 10
 func Init(tr *http.Transport) *HWApi {
 	return &HWApi{
-		hc:                 tr,
-		cache:              fastcache.LoadFromFileOrNew(cacheFilePath, maxCacheSize),
-		downloadConcurrent: 1,
+		hc:                  tr,
+		cache:               fastcache.LoadFromFileOrNew(cacheFilePath, maxCacheSize),
+		downloadConcurrency: 1,
 	}
 }
