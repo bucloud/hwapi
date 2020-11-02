@@ -8,8 +8,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/VictoriaMetrics/fastcache"
 )
 
 /*
@@ -19,8 +17,13 @@ Accesslogs are available via http&ftp but have different effection
 3. login ftp with accounthash and hosthash, root dir is a list contains only cds/cdi or other logtype dir
 NOTE, accesslogs only accessable by username&password
 */
-const (
-	stateFileName string = ".state"
+type downloadJob struct {
+	URL  string
+	Dest string
+}
+
+var (
+	downloadWorker chan downloadJob
 )
 
 /**
@@ -84,9 +87,9 @@ type downState struct {
 	Size        string
 }
 
-func getCacheData(c *fastcache.Cache, key string) *downState {
+func (api *HWApi) getCacheData(key string) *downState {
 	r := &downState{}
-	d := c.Get(nil, []byte(key))
+	d := api.cache.Get(nil, []byte(key))
 	if len(d) == 0 {
 		return r
 	}
@@ -95,44 +98,140 @@ func getCacheData(c *fastcache.Cache, key string) *downState {
 	}
 	return r
 }
-func saveState(c *fastcache.Cache, destFile string, k string, v *downState) error {
+func (api *HWApi) saveState(k string, v *downState) error {
 	v.EndedDate = time.Now().UTC()
 	b, e := json.Marshal(v)
 	if e != nil {
 		return fmt.Errorf("Parse interface{} to []byte failed")
 	}
-	c.Set([]byte(k), b)
-	return c.SaveToFile(destFile)
+	api.cache.Set([]byte(k), b)
+	return api.cache.SaveToFile(cacheFilePath)
 }
 
-// Download wrap accesslogs download
+// SetDownloadConcurrency accesslogs download concurrent count
+// maxConcurrent should less than 100
+func (api *HWApi) SetDownloadConcurrency(n uint) {
+	if n >= 100 {
+		api.downloadConcurrent = 100
+	} else if n <= 0 {
+		api.downloadConcurrent = 1
+	} else {
+		api.downloadConcurrent = n
+	}
+}
+
+// Downloads wrap accesslogs download
 // urls need to download while store in disk, you can re-call this method when error returned
 func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
-	c := fastcache.LoadFromFileOrNew(destDir+"/"+stateFileName, maxCacheSize)
+	if api.downloadConcurrency == 1 {
+		for _, u := range urls {
+			if _, e := api.download(destDir, u); e != nil {
+				return false, e
+			}
+		}
+	}
+	// reset channel
+	if downloadWorker != nil {
+		downloadWorker = nil
+	}
+	defer func() { downloadWorker = nil }()
+	downloadWorker = make(chan downloadJob, api.downloadConcurrency)
+	// start worker
+	for i := uint(1); i <= api.downloadConcurrency; i++ {
+		go api.downloadCurrently()
+	}
+
 	for _, u := range urls {
-		if _, e := api.download(destDir, u, c); e != nil {
-			return false, e
+		downloadWorker <- downloadJob{
+			URL:  u,
+			Dest: destDir,
 		}
 	}
 	return true, nil
 }
 
+// DownloadCurrently currently download logs,
+func (api *HWApi) downloadCurrently() {
+	// store this job and history urls in local temp file with logToken as fileName
+	// md5 := md5.New()
+	for j := range downloadWorker {
+		destPath := j.Dest + "/"
+		u := j.URL
+		if !strings.HasPrefix(u, "http") {
+			u = storageURL + "/" + u
+		}
+		t := api.getCacheData(u)
+		if t.State == 1 {
+			continue
+		}
+		t.StartedDate = time.Now().UTC()
+		defer api.saveState(u, t)
+		url, e := url.Parse(strings.Trim(u, "\r"))
+		if e != nil {
+			t.State = 10
+			fmt.Printf("parse accesslog url %s failed, %s", u, e.Error())
+			api.saveState(u, t)
+			continue
+		}
+		destPath += url.Path[:strings.LastIndex(url.Path, "/")]
+		r, e2 := api.Fetch(&http.Request{
+			Method: GET,
+			URL:    url,
+		})
+		if e2 != nil {
+			t.State = 11
+			fmt.Printf("download accesslogs %s failed, %s", u, e2.Error())
+			api.saveState(u, t)
+			continue
+		}
+		t.Size = r.Headers.Get("Content-Length")
+		// store body to dest
+		if mkdirError := os.MkdirAll(destPath, 0755); mkdirError != nil {
+			t.State = 20
+			fmt.Printf("create dir %s failed, %s", destPath, mkdirError.Error())
+			api.saveState(u, t)
+			continue
+		}
+		f, fe := os.OpenFile(destPath+url.Path[strings.LastIndex(url.Path, "/"):], os.O_WRONLY|os.O_CREATE, 0755)
+		if fe != nil {
+			t.State = 12
+			fmt.Printf("open file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
+			api.saveState(u, t)
+			continue
+		}
+		if _, fwe := f.Write(r.body); fwe != nil {
+			t.State = 13
+			fmt.Printf("write logdata to file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fwe.Error())
+			api.saveState(u, t)
+			continue
+		}
+		if closeError := f.Close(); closeError != nil {
+			t.State = 14
+			fmt.Printf("close file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
+			api.saveState(u, t)
+			continue
+		}
+		t.State = 1
+		api.saveState(u, t)
+	}
+}
+
 // Download accesslogs
-func (api *HWApi) download(destDir, u string, c *fastcache.Cache) (bool, error) {
+func (api *HWApi) download(destDir, u string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
 	destPath := destDir + "/"
 	if !strings.HasPrefix(u, "http") {
 		u = storageURL + "/" + u
 	}
-	t := getCacheData(c, u)
+	t := api.getCacheData(u)
 	if t.State == 1 {
 		return true, nil
 	}
 	t.StartedDate = time.Now().UTC()
-	defer saveState(c, destDir+"/"+stateFileName, u, t)
+	defer api.saveState(u, t)
 	url, e := url.Parse(strings.Trim(u, "\r"))
 	if e != nil {
 		t.State = 10
