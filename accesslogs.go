@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -24,6 +25,7 @@ type downloadJob struct {
 
 var (
 	downloadWorker chan downloadJob
+	wg             sync.WaitGroup
 )
 
 /**
@@ -112,11 +114,11 @@ func (api *HWApi) saveState(k string, v *downState) error {
 // maxConcurrent should less than 100
 func (api *HWApi) SetDownloadConcurrency(n uint) {
 	if n >= 100 {
-		api.downloadConcurrent = 100
+		api.downloadConcurrency = 100
 	} else if n <= 0 {
-		api.downloadConcurrent = 1
+		api.downloadConcurrency = 1
 	} else {
-		api.downloadConcurrent = n
+		api.downloadConcurrency = n
 	}
 }
 
@@ -149,6 +151,8 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 			Dest: destDir,
 		}
 	}
+	close(downloadWorker)
+	wg.Wait()
 	return true, nil
 }
 
@@ -156,6 +160,7 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 func (api *HWApi) downloadCurrently() {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
+	wg.Add(1)
 	for j := range downloadWorker {
 		destPath := j.Dest + "/"
 		u := j.URL
@@ -175,7 +180,7 @@ func (api *HWApi) downloadCurrently() {
 			api.saveState(u, t)
 			continue
 		}
-		destPath += url.Path[:strings.LastIndex(url.Path, "/")]
+		destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
 		r, e2 := api.Fetch(&http.Request{
 			Method: GET,
 			URL:    url,
@@ -216,6 +221,7 @@ func (api *HWApi) downloadCurrently() {
 		t.State = 1
 		api.saveState(u, t)
 	}
+	wg.Done()
 }
 
 // Download accesslogs
@@ -237,7 +243,7 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 		t.State = 10
 		return false, e
 	}
-	destPath += url.Path[:strings.LastIndex(url.Path, "/")]
+	destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
 	r, e2 := api.Fetch(&http.Request{
 		Method: GET,
 		URL:    url,
