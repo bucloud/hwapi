@@ -5,11 +5,12 @@ import (
 	"fmt"
 )
 
+// POPs list of POP
 type POPs struct {
 	List []*POP `json:"list"` //list
 }
 
-//A representation of a point of presence, also called a data center
+// POP A representation of a point of presence, also called a data center
 type POP struct {
 	ID         int     `json:"id"`     //The id of the pop
 	Code       string  `json:"code"`   //The code use to refer to the POP
@@ -23,18 +24,18 @@ type POP struct {
 	Analyzable bool    `json:"analyzable,omitempty"`
 }
 
-//IPs
+// IPs all ipv4&ipv6 address used by stackpath/highwinds
 type IPs struct {
 	List []*string `json:"list"` //list
 }
 
-//Returns the list of IPs used by the CDN
+// GetIPs Returns the list of IPs used by the CDN
 //Path /api/v1/ips
 func (api *HWApi) GetIPs() (*IPs, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/ips"),
+			URL:    fmt.Sprintf("/api/v1/ips"),
 		},
 	)
 	if e != nil {
@@ -44,13 +45,13 @@ func (api *HWApi) GetIPs() (*IPs, error) {
 	return i, json.Unmarshal(r.body, i)
 }
 
-//Returns the list of POPs (Point of Presence) on the CDN.
+// GetPoPs Returns the list of POPs (Point of Presence) on the CDN.
 //Path /api/v1/pops
 func (api *HWApi) GetPoPs() (*POPs, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/pops"),
+			URL:    fmt.Sprintf("/api/v1/pops"),
 		},
 	)
 	if e != nil {

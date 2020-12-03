@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// AuthToken tokens contains log and API
 type AuthToken struct {
 	AccessToken  string `json:"access_token,omitepty"`  //Access token
 	TokenType    string `json:"token_type"`             //Token type
@@ -17,29 +18,32 @@ type AuthToken struct {
 	LogTokens    string `json:"-"`                      //token used to access accesslogs
 }
 
+// Authentication simple token
 type Authentication struct {
 	token       string //Token
 	application string //Application
 	ip          string //IP
 }
 
-//Request model for an API token request
-type ApiTokenRequest struct {
+// APITokenRequest Request model for an API token request
+type APITokenRequest struct {
 	password    string //The user's current password
 	application string //The name of the application this token will be used for
 }
 
 type authInfo struct {
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Grant_type    string `json:"grant_type"`
-	Refresh_token string `json:"refresh_token"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	GrantType    string `json:"grant_type"`
+	RefreshToken string `json:"refresh_token"`
 }
 
+// AccessTokenList list of accesstoken
 type AccessTokenList struct {
 	list []*AccessToken
 }
 
+// AccessToken current accesstoken
 type AccessToken struct {
 	id          string //Unique ID for this AccessToken
 	token       string //The token used to authenticate with the API
@@ -50,8 +54,8 @@ type AccessToken struct {
 	refresh     bool   //Whether or not the token can be used to refresh an access token
 }
 
-//Create an API token with infinite expiration
-func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiTokenRequest) (*Authentication, error) {
+//CreateToken Create an API token with infinite expiration
+func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*APITokenRequest) (*Authentication, error) {
 	if (accountHash == "" || uid == 0) && api.CurrentUser.AccountHash == "" {
 		return nil, errors.New("accountHash must supplied or use AboutMe to generate current user info")
 	}
@@ -59,7 +63,7 @@ func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiT
 		accountHash = api.CurrentUser.AccountHash
 	}
 	if uid == 0 {
-		uid = api.CurrentUser.Id
+		uid = api.CurrentUser.ID
 	}
 
 	//Create create token request
@@ -67,7 +71,7 @@ func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiT
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens", accountHash, uid),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens", accountHash, uid),
 			Body:   &tokenRequest,
 		},
 	)
@@ -78,12 +82,12 @@ func (api *HWApi) CreateToken(accountHash string, uid int, tokenRequest ...*ApiT
 	return a, json.Unmarshal(r.body, a)
 }
 
-//Fetch all tokens associated with this user
+// GetTokens Fetch all tokens associated with this user
 func (api *HWApi) GetTokens(accountHash string, uid int) (*AccessTokenList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens", accountHash, uid),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens", accountHash, uid),
 		},
 	)
 	if e != nil {
@@ -96,7 +100,7 @@ func (api *HWApi) GetTokens(accountHash string, uid int) (*AccessTokenList, erro
 // DeleteToken Delete token
 func (api *HWApi) DeleteToken(a string, uid int, tokenID int) (bool, error) {
 	_, e := api.Request(&Request{
-		Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens/%d", a, uid, tokenID),
+		URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d/tokens/%d", a, uid, tokenID),
 		Method: DELETE,
 	})
 	if e != nil {
@@ -112,7 +116,7 @@ func (api *HWApi) Auth(u, p string, accesslog ...bool) (*AuthToken, error) {
 
 		r, e := api.Request(&Request{
 			Method: GET,
-			Url:    authURL,
+			URL:    authURL,
 			Headers: map[string]string{
 				"X-Auth-User":   "hwcdn-logstore:" + u,
 				"X-Auth-Key":    p,
@@ -131,11 +135,11 @@ func (api *HWApi) Auth(u, p string, accesslog ...bool) (*AuthToken, error) {
 	}
 	r, e := api.Request(&Request{
 		Method: POST,
-		Url:    "/auth/token",
+		URL:    "/auth/token",
 		Body: &authInfo{
-			Grant_type: "password",
-			Username:   u,
-			Password:   p,
+			GrantType: "password",
+			Username:  u,
+			Password:  p,
 		},
 	})
 	if e != nil {
@@ -159,7 +163,7 @@ func (api *HWApi) checkToken() (bool, error) {
 	return true, nil
 }
 
-//Automate refresh token when token is not available.
+// RefreshToken Automate refresh token when token is not available.
 //Note, this function had deprecated.
 func (api *HWApi) RefreshToken(refreshT ...string) (*AuthToken, error) {
 	if api.AuthToken.RefreshToken == "" && refreshT == nil {
@@ -175,10 +179,10 @@ func (api *HWApi) RefreshToken(refreshT ...string) (*AuthToken, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    "/auth/token",
+			URL:    "/auth/token",
 			Body: &authInfo{
-				Grant_type:    "refresh_token",
-				Refresh_token: t,
+				GrantType:    "refresh_token",
+				RefreshToken: t,
 			},
 		},
 	)

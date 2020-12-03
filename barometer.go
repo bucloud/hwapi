@@ -5,9 +5,12 @@ import (
 	"strings"
 )
 
+// TraceRoute result list
 type TraceRoute struct {
 	List []*TraceRouteResponse `json:"list"`
 }
+
+// TraceRouteResponse traceroute info
 type TraceRouteResponse struct {
 	DataCenter  string //POP COde
 	IPAddress   string //Hostname's IPAddress
@@ -15,13 +18,15 @@ type TraceRouteResponse struct {
 	HopCount    int    //hop
 }
 
+// BarometerList list contains multiple BarometerResponse
 type BarometerList struct {
 	List []*BarometerResponse `json:"list"`
 }
 
+// BarometerResponse http barometer response
 type BarometerResponse struct {
 	Datacenter  string            //Datacenter
-	DnsMS       int               //dnsMS
+	DNSMs       int               //dnsMS
 	ConnectMS   int               //connectMS
 	SslMS       int               //sslMS
 	FirstByteMS int               //firstByteMS
@@ -31,7 +36,7 @@ type BarometerResponse struct {
 	Headers     map[string]string //Header
 }
 
-//Get the list of traceroute responses for a given url
+// BarometerTrace Get the list of traceroute responses for a given url
 //hostName is Address to test
 //pops is List of pops to test
 func (api *HWApi) BarometerTrace(hostName string, pops ...string) (*TraceRouteResponse, error) {
@@ -45,7 +50,7 @@ func (api *HWApi) BarometerTrace(hostName string, pops ...string) (*TraceRouteRe
 		q["pop"] = strings.TrimRight(pop, ",")
 	}
 	if r, e := api.Request(&Request{
-		Url: "/api/v1/barometer/traceroute",
+		URL: "/api/v1/barometer/traceroute",
 		Query: map[string]string{
 			"hostname": hostName,
 			"pop":      pop,
@@ -58,9 +63,9 @@ func (api *HWApi) BarometerTrace(hostName string, pops ...string) (*TraceRouteRe
 	}
 }
 
-//Get the list of HTTP responses for a given url
-//hostname is Url to test
-//pops is List of pops to test
+// BarometerRequest test performance between POPs and destionation
+// hostname is Url to test
+// pops is List of pops to test
 func (api *HWApi) BarometerRequest(hostName string, pops ...string) (*BarometerResponse, error) {
 	pop := ""
 	for _, k := range pops {
@@ -72,7 +77,7 @@ func (api *HWApi) BarometerRequest(hostName string, pops ...string) (*BarometerR
 		q["pop"] = strings.TrimRight(pop, ",")
 	}
 	if r, e := api.Request(&Request{
-		Url: "/api/v1/barometer/traceroute",
+		URL: "/api/v1/barometer/traceroute",
 		Query: map[string]string{
 			"hostname": hostName,
 			"pop":      pop,

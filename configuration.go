@@ -4213,7 +4213,7 @@ func (api *HWApi) GetConfigurationGraph(accountHash string) (*Graph, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/graph", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/graph", accountHash),
 		},
 	)
 	if e != nil {
@@ -4230,7 +4230,7 @@ func (api *HWApi) GetHostNames(accountHash string) (*ConfigurationHostNamesList,
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hostnames", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hostnames", accountHash),
 		},
 	)
 	if e != nil {
@@ -4247,7 +4247,7 @@ func (api *HWApi) CreateScope(accountHash string, hostHash string, scope *Scope)
 	_, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/scopes", accountHash, hostHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/scopes", accountHash, hostHash),
 			Body:   scope,
 		},
 	)
@@ -4264,7 +4264,7 @@ func (api *HWApi) GetScopes(accountHash string, hostHash string) (*ConfigScopeLi
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/scopes", accountHash, hostHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/scopes", accountHash, hostHash),
 		},
 	)
 	if e != nil {
@@ -4281,7 +4281,7 @@ func (api *HWApi) DeleteScope(accountHash string, hostHash string, scopeID int) 
 	if _, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
 		},
 	); e != nil {
 		return false, e
@@ -4302,7 +4302,7 @@ func (api *HWApi) GetConfiguration(accountHash string, hostHash string, scopeID 
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
 		},
 	)
 	if e != nil {
@@ -4319,7 +4319,7 @@ func (api *HWApi) UpdateConfiguration(accountHash string, hostHash string, scope
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d", accountHash, hostHash, scopeID),
 			Body:   configuration,
 		},
 	)
@@ -4344,7 +4344,7 @@ func (api *HWApi) CheckConfigUpdateStatus(accountHash string, hostHash string, s
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d/%s", accountHash, hostHash, scopeID, configurationID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hosts/%s/configuration/%d/%s", accountHash, hostHash, scopeID, configurationID),
 		},
 	)
 	if e != nil {
@@ -4360,7 +4360,7 @@ func (api *HWApi) GetConfigurationDoc() (string, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/configuration"),
+			URL:    fmt.Sprintf("/api/v1/configuration"),
 		},
 	)
 	if e != nil {

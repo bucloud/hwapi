@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-//An origin server from which the CDN pulls content
+// Origin An origin server from which the CDN pulls content
 type Origin struct {
-	Id                           int    `json:"id,omitempty"`                           //The origin's id
+	ID                           int    `json:"id,omitempty"`                           //The origin's id
 	Name                         string `json:"name,omitempty"`                         //The origin's friendly name
 	Type                         string `json:"Type,omitempty"`                         //The origin's type (defaults to EXTERNAL for external origins)
 	Path                         string `json:"path,omitempty"`                         //The path to prepend to requests
@@ -34,18 +34,18 @@ type Origin struct {
 	AccountHash                  string `json:"accountHash,omitempty"`
 }
 
-//List of origins
+// OriginList List of origins
 type OriginList struct {
 	List []*Origin `json:"list"`
 }
 
-//Create a new origin
+// CreateOrigin Create a new origin
 //Path /api/v1/accounts/{account_hash}/origins
 func (api *HWApi) CreateOrigin(accountHash string, origin *Origin) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/origins", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/origins", accountHash),
 			Body:   origin,
 		},
 	)
@@ -56,13 +56,13 @@ func (api *HWApi) CreateOrigin(accountHash string, origin *Origin) (*Origin, err
 	return al, json.Unmarshal(r.body, al)
 }
 
-//List all origins on an account
+// GetOrigins List all origins on an account
 //Path /api/v1/accounts/{account_hash}/origins
 func (api *HWApi) GetOrigins(accountHash string) (*OriginList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/origins", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/origins", accountHash),
 		},
 	)
 	if e != nil {
@@ -72,13 +72,13 @@ func (api *HWApi) GetOrigins(accountHash string) (*OriginList, error) {
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Delete an origin
+// DeleteOrigin Delete an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
 func (api *HWApi) DeleteOrigin(accountHash string, originID int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
 		},
 	)
 	if e != nil {
@@ -87,13 +87,13 @@ func (api *HWApi) DeleteOrigin(accountHash string, originID int) (bool, error) {
 	return true, nil
 }
 
-//Update an origin
+// UpdateOrigin Update an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
 func (api *HWApi) UpdateOrigin(accountHash string, originID int, origin *Origin) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
 			Body:   origin,
 		},
 	)
@@ -104,13 +104,13 @@ func (api *HWApi) UpdateOrigin(accountHash string, originID int, origin *Origin)
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Get an origin
+// GetOrigin Get an origin
 //Path /api/v1/accounts/{account_hash}/origins/{origin_id}
 func (api *HWApi) GetOrigin(accountHash string, originID int) (*Origin, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/origins/%d", accountHash, originID),
 		},
 	)
 	if e != nil {

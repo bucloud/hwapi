@@ -2,25 +2,25 @@ package hwapi
 
 import "encoding/json"
 
-//Billing region list
+// BillingRegionList Billing region list
 type BillingRegionList struct {
 	List []*BRegion `json:"list"` //List
 }
 
-//Billing region
+// BRegion Billing region
 type BRegion struct {
 	ID   int    `json:"id"`   //Id
 	Code string `json:"code"` //Code
 	Name string `json:"name"` //Name
 }
 
-//Returns the list of billing regions in the CDN.
+// GetBillingRegions Returns the list of billing regions in the CDN.
 //Path /api/v1/billingRegions
 func (api *HWApi) GetBillingRegions() (*BillingRegionList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    "/api/v1/billingRegions",
+			URL:    "/api/v1/billingRegions",
 		},
 	)
 	if e != nil {

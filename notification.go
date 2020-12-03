@@ -5,21 +5,21 @@ import (
 	"fmt"
 )
 
-//Notification list
+//NotificationList list of Notification
 type NotificationList struct {
 	List []*Notification `json:"list"` //list
 }
 
-//Notification
+//Notification struct
 type Notification struct {
-	Id          int       `json:"id"`          //Id
+	ID          int       `json:"id"`          //Id
 	CreatedDate string    `json:"createdDate"` //Created date
 	Services    []*string `json:"services"`    //Services
 	Subject     string    `json:"subject"`     //Notification subject
 	Subtitle    string    `json:"subtitle"`    //Notification Subtitle
 }
 
-//Get notification list
+// GetNotifications Get notification list
 //Path /api/v1/accounts/{account_hash}/notifications
 func (api *HWApi) GetNotifications(accountHash string, includeMessage bool, startDate string, endDate string) (*NotificationList, error) {
 	im := "false"
@@ -29,7 +29,7 @@ func (api *HWApi) GetNotifications(accountHash string, includeMessage bool, star
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/notifications", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/notifications", accountHash),
 			Query: map[string]string{
 				"includeMessage": im,
 				"startDate":      startDate,
@@ -44,14 +44,14 @@ func (api *HWApi) GetNotifications(accountHash string, includeMessage bool, star
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Get notification
+// GetNotification Get notification
 //Path /api/v1/accounts/{account_hash}/notifications/{notification_id}
 //Get notification
 func (api *HWApi) GetNotification(accountHash string, notificationID int) (*Notification, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/notifications/%d", accountHash, notificationID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/notifications/%d", accountHash, notificationID),
 		},
 	)
 	if e != nil {

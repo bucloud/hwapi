@@ -5,8 +5,9 @@ import (
 	"fmt"
 )
 
+// User details
 type User struct {
-	Id                       int         `json:"id"`          //The user id
+	ID                       int         `json:"id"`          //The user id
 	UserName                 string      `json:"username"`    //The username of the user
 	Status                   string      `json:"status"`      //The status of the user
 	OldPassword              string      `json:"oldPassword"` //The user's previous password, required to change another user's password
@@ -27,10 +28,13 @@ type User struct {
 	AccountName              string      `json:"accountName"`              //accountName
 }
 
+// Roles user roles, contains user and it's subaccount's role
 type Roles struct {
 	UserAccount Role `json:"userAccount"`
 	SubAccounts Role `json:"subAccounts"`
 }
+
+// Role user role
 type Role struct {
 	Report        string `json:"report"`
 	Account       string `json:"account"`
@@ -38,6 +42,7 @@ type Role struct {
 	Configuration string `json:"configuration"`
 }
 
+// Show deprecated
 type Show struct {
 	deleteEncodedAssetPopup bool
 	embedCode               bool
@@ -48,31 +53,35 @@ type Show struct {
 	transcodes              bool
 }
 
+// Filter user under profiles
 type Filter struct {
 	explicitPolicies  bool
 	inheritedPolicies bool
 	defaultPolicies   bool
 }
 
+// Preferences user profiles
 type Preferences struct {
-	Home                 string  `json:"home"`
-	Sessions             Session `json:"session"`
-	LastReadNotification string  `json:"lastReadNotification"`
-	ShowJson             bool
+	Home                 string              `json:"home"`
+	Sessions             Session             `json:"session"`
+	LastReadNotification string              `json:"lastReadNotification"`
+	ShowJSON             bool                `json:"showJson,omitempty"`
 	ExpandedHost         map[string][]string `json:"expandedHost"`
-	Barometer_url        string              `json:"barometer_url"`
+	BarometerURL         string              `json:"barometer_url"`
 	DefaultPurgeType     string              `json:"defaultPurgeType"`
 	UserTasks            TaskList            `json:"userTasks"`
 	SeenSitesPage        bool                `json:"seenSitesPage"`
 	SecureChatToken      ChatToken           `json:"secureChatToken"`
 }
 
+// ChatToken ignore
 type ChatToken struct {
 	Token string `json:"token"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
 
+// TaskList a list contains tasks
 type TaskList struct {
 	TaskList        []*Task `json:"taskList"`
 	PercentComplete float32 `json:"percentComplete"`
@@ -80,6 +89,7 @@ type TaskList struct {
 	Closed          bool    `json:"closed"`
 }
 
+// Task pending tasks
 type Task struct {
 	Name              string `json:"name"`
 	Order             int    `json:"order"`
@@ -90,6 +100,7 @@ type Task struct {
 	SeenComplete      bool   `json:"seenComplete"`
 }
 
+// Sessions session details
 type Sessions struct {
 	ServiceControls                Session `json:"ServiceControls"`
 	SubAccountControls             Session `json:"SubAccountControls"`
@@ -115,6 +126,7 @@ type Sessions struct {
 	OriginsController              Session `json:"OriginsController"`
 }
 
+// Session online sessions
 type Session struct {
 	ControllerName string   `json:"controllerName"`
 	ItemsPerPage   int      `json:"itemsPerPage"`
@@ -126,23 +138,26 @@ type Session struct {
 	Sort           string   `json:"sort"`
 	Filters        Filter   `json:"filters"`
 	OA             []Filter `json:"OA"`
-	ExpandaItemId  int      `json:"expandaItemI"`
+	ExpandaItemID  int      `json:"expandaItemI"`
 	Show           Show     `json:"show"`
 }
 
+// UserList a list contains users
 type UserList struct {
 	List []*User
 }
 
+// PasswordReset used when reset password
 type PasswordReset struct {
 	PasswordReset string
 }
 
+// AboutMe get current authenticated userinfo
 func (api *HWApi) AboutMe() (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    "/api/v1/users/me",
+			URL:    "/api/v1/users/me",
 		},
 	)
 	if e != nil {
@@ -151,13 +166,13 @@ func (api *HWApi) AboutMe() (*User, error) {
 	return api.CurrentUser, json.Unmarshal(r.body, &api.CurrentUser)
 }
 
-//Detech wether username exists under currentAccount
-//Note, this function had deprecated
+// HasUser Detech wether username exists under currentAccount
+// Note, this function had deprecated
 func (api *HWApi) HasUser(username string) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    "/api/v1/users/" + username,
+			URL:    "/api/v1/users/" + username,
 		},
 	)
 	if e != nil {
@@ -166,12 +181,12 @@ func (api *HWApi) HasUser(username string) (bool, error) {
 	return false, e
 }
 
-//Update currentUser
+// UpdateMe Update currentUser
 func (api *HWApi) UpdateMe(user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    "/api/v1/users/me",
+			URL:    "/api/v1/users/me",
 			Body:   &user,
 		},
 	)
@@ -181,12 +196,12 @@ func (api *HWApi) UpdateMe(user *User) (*User, error) {
 	return api.CurrentUser, json.Unmarshal(r.body, &api.CurrentUser)
 }
 
-//Update user
+// UpdateUser Update user
 func (api *HWApi) UpdateUser(accountHash string, uid int, user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
 			Body:   &user,
 		},
 	)
@@ -196,12 +211,12 @@ func (api *HWApi) UpdateUser(accountHash string, uid int, user *User) (*User, er
 	return api.CurrentUser, json.Unmarshal(r.body, &api.CurrentUser)
 }
 
-//Get user info by userID under account
+// AboutUser Get user info by userID under account
 func (api *HWApi) AboutUser(accountHash string, uid int) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
 		},
 	)
 	if e != nil {
@@ -210,12 +225,12 @@ func (api *HWApi) AboutUser(accountHash string, uid int) (*User, error) {
 	return api.CurrentUser, json.Unmarshal(r.body, &api.CurrentUser)
 }
 
-//Delete user by userID under account
+// DeleteUser Delete user by userID under account
 func (api *HWApi) DeleteUser(accountHash string, uid int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users/%d", accountHash, uid),
 		},
 	)
 	if e != nil {
@@ -224,12 +239,12 @@ func (api *HWApi) DeleteUser(accountHash string, uid int) (bool, error) {
 	return true, nil
 }
 
-//Get users for account
+// GetUsers Get users for account
 func (api *HWApi) GetUsers(accountHash string) (*UserList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s", accountHash),
 		},
 	)
 	if e != nil {
@@ -239,12 +254,12 @@ func (api *HWApi) GetUsers(accountHash string) (*UserList, error) {
 	return ul, json.Unmarshal(r.body, ul)
 }
 
-//Greate new user for account
+// CreateUser create new user for account
 func (api *HWApi) CreateUser(accountHash string, user *User) (*User, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/users", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/users", accountHash),
 			Body:   &user,
 		},
 	)

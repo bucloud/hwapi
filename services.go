@@ -5,24 +5,25 @@ import (
 	"fmt"
 )
 
-//A billable service enabled on an account or host
+// Service A billable service enabled on an account or host
 type Service struct {
-	Id          int    `json:"id"`          //The service id, used for setting services on an entity
+	ID          int    `json:"id"`          //The service id, used for setting services on an entity
 	Name        string `json:"name"`        //The friendly name of the service
 	Description string `json:"description"` //Description of the service
 	Type        string `json:"type"`        //type of service
 }
 
+// Services list
 type Services struct {
 	List []*Service
 }
 
-//Get available services list
+// GetServices Get available services list
 func (api *HWApi) GetServices(accountHash string) (*Services, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/services", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/services", accountHash),
 		},
 	)
 	if e != nil {

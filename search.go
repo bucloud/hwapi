@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-//Full text search for entities tied to an account
+// SearchResult Full text search for entities tied to an account
 //Path /api/v1/accounts/{account_hash}/search
 type SearchResult struct {
 	Hosts      []*HostName          `json:"hosts"`
@@ -17,6 +17,7 @@ type SearchResult struct {
 	Users      []*User              `json:"users"`
 }
 
+// Search accounts? hosts? origins? certificates
 func (api *HWApi) Search(accountHash string, search string, maxResults int) (*SearchResult, error) {
 	if maxResults == 0 {
 		maxResults = 5
@@ -24,7 +25,7 @@ func (api *HWApi) Search(accountHash string, search string, maxResults int) (*Se
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/search", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/search", accountHash),
 			Query: map[string]string{
 				"search":    search,
 				"maxResult": strconv.Itoa(maxResults),

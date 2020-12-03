@@ -6,11 +6,12 @@ import (
 	"time"
 )
 
-//Analytics
+//Analytics list of series
 type Analytics struct {
 	Series []*Series `json:"series"` //Status
 }
 
+// Series tsdb data
 type Series struct {
 	Type    string      `json:"type"`    //type
 	Key     string      `json:"key"`     //Key
@@ -18,7 +19,7 @@ type Series struct {
 	Data    [][]float64 `json:"data"`    //Data
 }
 
-// A user enters a start time and end time (the timeframe) for transfer data. When the API returns the transfer data, the timeframe of the answer may not exactly match the timeframe of the request. This happens because the API returns data in terms of time buckets defined by the requested granularity:
+// StorageData A user enters a start time and end time (the timeframe) for transfer data. When the API returns the transfer data, the timeframe of the answer may not exactly match the timeframe of the request. This happens because the API returns data in terms of time buckets defined by the requested granularity:
 // Five minute granularity begins at the top of the hour and at each five-minute interval and ends after five minutes.
 // Hourly granularity begins at the top of the hour and ends just before the end of the hour.
 // Daily granularity begins at midnight and ends just before the next midnight.
@@ -60,7 +61,7 @@ type StorageData struct {
 	lastUpdatedTime           float32   // last time this bucket was updated
 }
 
-// A user enters a start time and end time (the timeframe) for transfer data. When the API returns the transfer data, the timeframe of the answer may not exactly match the timeframe of the request. This happens because the API returns data in terms of time buckets defined by the requested granularity:
+// TransferData A user enters a start time and end time (the timeframe) for transfer data. When the API returns the transfer data, the timeframe of the answer may not exactly match the timeframe of the request. This happens because the API returns data in terms of time buckets defined by the requested granularity:
 // Five minute granularity begins at the top of the hour and at each five-minute interval and ends after five minutes.
 // Hourly granularity begins at the top of the hour and ends just before the end of the hour.
 // Daily granularity begins at midnight and ends just before the next midnight.
@@ -116,6 +117,7 @@ type TransferData struct {
 	peakToMeanRequestsRatio float32   // maximum requests per second divided by mean requests per second
 }
 
+// AnalyticsQuery query parameters
 type AnalyticsQuery struct {
 	StartDate        string `json:"startDate,omitempty"`        //The start date of the query range in ISO8601 format (e.g. 2013-11-01T00:00:00Z)
 	EndDate          string `json:"endDate,omitempty"`          //The end date of the query range in ISO8601 format (e.g. 2013-11-02T00:00:00Z)
@@ -130,7 +132,7 @@ type AnalyticsQuery struct {
 	GroupBy          string `json:"groupBy,omitempty"`          //Groups the results by the specified entity
 }
 
-//Returns batch job status, or results if completed for specified job ID
+// BatchJob Returns batch job status, or results if completed for specified job ID
 //Path /api/v1/accounts/{account_hash}/analytics/poll
 //Doesn't implemented
 func (api *HWApi) BatchJob(accountHash string) {
@@ -148,31 +150,31 @@ func (api *HWApi) BatchJob(accountHash string) {
 	// return al, json.Unmarshal(r.body, al)
 }
 
-//Returns http status code analytics for the specified account hash
+// GetStatusData Returns http status code analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/status
 func (api *HWApi) GetStatusData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("status", accountHash, q)
 }
 
-//Returns account storage analytics for the specified account hash
+// GetStorageData Returns account storage analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/storage
 func (api *HWApi) GetStorageData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("storage", accountHash, q)
 }
 
-//Returns account transfer analytics for the specified account hash
+// GetTransferData Returns account transfer analytics for the specified account hash
 //Path /api/v1/accounts/{account_hash}/analytics/transfer
 func (api *HWApi) GetTransferData(accountHash string, q *AnalyticsQuery) (*Analytics, error) {
 	return api.GetAnalytics("transfer", accountHash, q)
 }
 
-//Get analytics Data wrap
+// GetAnalytics Get analytics Data wrap
 func (api *HWApi) GetAnalytics(dt string, accountHash string, query interface{}) (*Analytics, error) {
 
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/analytics/%s", accountHash, dt),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/analytics/%s", accountHash, dt),
 			Query:  query.(map[string]string),
 		},
 	)

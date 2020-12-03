@@ -7,26 +7,26 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	apiErrors "github.com/bucloud/hwapi/errors"
 )
 
+// Request used by API requests only, different from http.Request
 type Request struct {
-	Url     string //request url
+	URL     string //request url
 	Method  string //request method
 	Query   map[string]string
 	Headers map[string]string
 	Body    interface{}
 	Options map[string]string
 }
+
+// Response simple response
 type Response struct {
 	StatusCode int
 	StatusText string
 	body       []byte
 	Headers    http.Header
-}
-
-type ErrorResponse struct {
-	Error string `json:"error"`
-	Code  int    `json:"code"`
 }
 
 const (
@@ -43,11 +43,11 @@ const (
 
 //Request wrap
 func (api *HWApi) Request(req *Request) (*Response, error) {
-	if !strings.HasPrefix(req.Url, "http") {
-		if strings.HasPrefix(req.Url, "/") {
-			req.Url = apiBase + req.Url
+	if !strings.HasPrefix(req.URL, "http") {
+		if strings.HasPrefix(req.URL, "/") {
+			req.URL = apiBase + req.URL
 		} else {
-			req.Url = apiBase + "/" + req.Url
+			req.URL = apiBase + "/" + req.URL
 		}
 	}
 	//parse body
@@ -104,15 +104,15 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 		}
 	}
 	if len(queryString) != 0 {
-		if strings.Index(req.Url, "?") < 0 {
-			req.Url += "?"
+		if strings.Index(req.URL, "?") < 0 {
+			req.URL += "?"
 		} else {
-			req.Url += "&"
+			req.URL += "&"
 		}
-		req.Url += strings.Join(uniqueSlice(queryString), "&")
+		req.URL += strings.Join(uniqueSlice(queryString), "&")
 	}
 	//parse request headers
-	r, ee := http.NewRequest(req.Method, req.Url, buf)
+	r, ee := http.NewRequest(req.Method, req.URL, buf)
 	if ee != nil {
 		panic(ee)
 	}
@@ -123,11 +123,10 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 	return api.Fetch(r)
 }
 
-//HWApi fetch function,add auth header and application/json header
-func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
-	if !strings.Contains(req.URL.Host, "hcs.hwcdn") && !strings.HasSuffix(req.URL.Path, "auth/token") && api.AuthToken == nil {
-		return nil, errors.New("This endpoint requires authentication")
-	}
+func (api *HWApi) addHeaders(req *http.Request) {
+	// if !strings.Contains(req.URL.Host, "hcs.hwcdn") && !strings.HasSuffix(req.URL.Path, "auth/token") && api.AuthToken == nil {
+	// 	return nil, errors.New("This endpoint requires authentication")
+	// }
 	if req.Header == nil {
 		req.Header = http.Header{}
 	}
@@ -145,7 +144,11 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 	}
+}
 
+//Fetch wrap http.Request add required headers and parse response
+func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
+	api.addHeaders(req)
 	rep, err := api.hc.RoundTrip(req)
 	if err != nil {
 		return nil, err
@@ -158,7 +161,7 @@ func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 
 	if rep.StatusCode > 300 || rep.StatusCode < 200 {
 		//tre parse error info in response
-		errorInfo := &ErrorResponse{}
+		errorInfo := &apiErrors.ErrorResponse{}
 		e := json.Unmarshal(d, errorInfo)
 		if e != nil {
 			return nil, errors.New(req.URL.String() + " : " + rep.Status)

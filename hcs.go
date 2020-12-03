@@ -5,12 +5,12 @@ import (
 	"fmt"
 )
 
-//HcsContainer list
+//HcsContainerList list
 type HcsContainerList struct {
 	List []*HcsContainer `json:"list"` //list
 }
 
-//HcsContainer
+// HcsContainer HcsContainer
 type HcsContainer struct {
 	Name            string            `json:"name,omitempty"`            //(POST only) The container's name
 	Region          string            `json:"region"`                    //(read only) The container's region
@@ -22,12 +22,12 @@ type HcsContainer struct {
 	Meta            map[string]string `json:"meta,omitempty"`            //(PUT only) An indexed-array (json object) of key-value pairs for setting custom meta-data on containers. (Key must follow this form: 'X-Container-Meta-{name})
 }
 
-//HcsTenant list
+// HcsTenantList HcsTenant list
 type HcsTenantList struct {
 	List []*HcsTenant `json:"list"` //list
 }
 
-//HcsTenant
+// HcsTenant HcsTenant
 type HcsTenant struct {
 	Name            string `json:"name"`            //The tenants's friendly name
 	HCSUser         string `json:"hcsUser"`         //The username to be used for the hcs account the system creates
@@ -41,7 +41,7 @@ type HcsTenant struct {
 	UpdatedDate     string `json:"updatedDate,omitepty"`
 }
 
-//HcsObject
+// HcsObject HcsObject
 type HcsObject struct {
 	Etag         string            `json:"etag"`          //(read only) The object's eTag
 	Hash         string            `json:"hash"`          //(read only) The object's eTag
@@ -53,14 +53,14 @@ type HcsObject struct {
 	Subdir       string            `json:"subdir"`        //Dir name if this object is dir
 }
 
-//Create a new HcsTenant
+// CreateHCSTenant Create a new HcsTenant
 //Path /api/v1/accounts/{account_hash}/hcs/tenants
 //JSON representation of the HcsTenant to create. The structure should match the response class model minus the id property as that is not allowed when creating a new HcsTenant.
 func (api *HWApi) CreateHCSTenant(accountHash string, hcsT HcsTenant) (*HcsTenant, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants", accountHash),
 			Body:   hcsT,
 		},
 	)
@@ -71,13 +71,13 @@ func (api *HWApi) CreateHCSTenant(accountHash string, hcsT HcsTenant) (*HcsTenan
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Returns a list of HcsTenants that belong to the given account.
+// GetHCSTenants Returns a list of HcsTenants that belong to the given account.
 //Path /api/v1/accounts/{account_hash}/hcs/tenants
 func (api *HWApi) GetHCSTenants(accountHash string) (*HcsTenantList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants", accountHash),
 		},
 	)
 	if e != nil {
@@ -87,13 +87,13 @@ func (api *HWApi) GetHCSTenants(accountHash string) (*HcsTenantList, error) {
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Delete a host name
+// DeleteHCSTenant Delete a host name
 //Path /api/v1/accounts/{account_hash}/hcs/tenants/{tenant_id}
 func (api *HWApi) DeleteHCSTenant(accountHash string, tenantID int) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
 		},
 	)
 	if e != nil {
@@ -102,13 +102,13 @@ func (api *HWApi) DeleteHCSTenant(accountHash string, tenantID int) (bool, error
 	return true, nil
 }
 
-//Returns specific HcsTenant on the specified account.
+// GetHCSTenant Returns specific HcsTenant on the specified account.
 //Path /api/v1/accounts/{account_hash}/hcs/tenants/{tenant_id}
 func (api *HWApi) GetHCSTenant(accountHash string, tenantID int) (*HcsTenant, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
 		},
 	)
 	if e != nil {
@@ -118,14 +118,14 @@ func (api *HWApi) GetHCSTenant(accountHash string, tenantID int) (*HcsTenant, er
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Update an existing HcsTenant for an account
+// UpdateHCSTenant Update an existing HcsTenant for an account
 //Path /api/v1/accounts/{account_hash}/hcs/tenants/{tenant_id}
 //JSON representation of the HcsTenant to update. The structure should match the response class model.
 func (api *HWApi) UpdateHCSTenant(accountHash string, tenantID int, t HcsTenant) (*HcsTenant, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/tenants/%d", accountHash, tenantID),
 			Body:   t,
 		},
 	)
@@ -136,13 +136,13 @@ func (api *HWApi) UpdateHCSTenant(accountHash string, tenantID int, t HcsTenant)
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Return a list of containers that belong to the given account
+// GetHCSContainers Return a list of containers that belong to the given account
 //Path /api/v1/accounts/{account_hash}/hcs/containers
 func (api *HWApi) GetHCSContainers(accountHash string) (*HcsContainerList, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers", accountHash),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers", accountHash),
 		},
 	)
 	if e != nil {
@@ -152,14 +152,14 @@ func (api *HWApi) GetHCSContainers(accountHash string) (*HcsContainerList, error
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Create a new container
+// CreateHCSContainer Create a new container
 //Path /api/v1/accounts/{account_hash}/hcs/containers/{tenant_name}
 //JSON representation of the HcsContainer to create. The only field accepted on HcsContainer creation is 'name'.
 func (api *HWApi) CreateHCSContainer(accountHash string, tenantName string, containerName string) (*HcsContainer, error) {
 	r, e := api.Request(
 		&Request{
 			Method: POST,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s", accountHash, tenantName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s", accountHash, tenantName),
 			Body: &HcsContainer{
 				Name: containerName,
 			},
@@ -172,13 +172,13 @@ func (api *HWApi) CreateHCSContainer(accountHash string, tenantName string, cont
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Delete a container
+// DeleteHCSContainer Delete a container
 //Path /api/v1/accounts/{account_hash}/hcs/containers/{tenant_name}/{container_name}
 func (api *HWApi) DeleteHCSContainer(accountHash string, tenantName string, containerName string) (bool, error) {
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
 		},
 	)
 	if e != nil {
@@ -187,13 +187,13 @@ func (api *HWApi) DeleteHCSContainer(accountHash string, tenantName string, cont
 	return true, nil
 }
 
-//Returns specific container on the specified account and tenant.
+// GetHCSContainer Returns specific container on the specified account and tenant.
 //Path /api/v1/accounts/{account_hash}/hcs/containers/{tenant_name}/{container_name}
 func (api *HWApi) GetHCSContainer(accountHash string, tenantName string, containerName string) (*HcsContainer, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
 		},
 	)
 	if e != nil {
@@ -203,14 +203,14 @@ func (api *HWApi) GetHCSContainer(accountHash string, tenantName string, contain
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Update an existing container
+// UpdateHCSContainer Update an existing container
 //Path /api/v1/accounts/{account_hash}/hcs/containers/{tenant_name}/{container_name}
 //JSON representation of the HcsContainer to create. The only fields accepted on HcsContainer updates are 'quota, readPermissions, meta'.
 func (api *HWApi) UpdateHCSContainer(accountHash string, tenantName string, containerName string, container HcsContainer) (*HcsContainer, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/containers/%s/%s", accountHash, tenantName, containerName),
 			Body: &HcsContainer{
 				Quota:           container.Quota,
 				ReadPermissions: container.ReadPermissions,
@@ -225,7 +225,7 @@ func (api *HWApi) UpdateHCSContainer(accountHash string, tenantName string, cont
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Get the objects
+// GetHCSObjects Get the objects
 //Path /api/v1/accounts/{account_hash}/hcs/objects/{tenant_name}/{container_name}
 func (api *HWApi) GetHCSObjects(accountHash string, tenantName string, containerName string, prefix ...string) ([]*HcsObject, error) {
 	p := ""
@@ -235,7 +235,7 @@ func (api *HWApi) GetHCSObjects(accountHash string, tenantName string, container
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s", accountHash, tenantName, containerName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s", accountHash, tenantName, containerName),
 			Query: map[string]string{
 				"prefix": p,
 			},
@@ -248,7 +248,7 @@ func (api *HWApi) GetHCSObjects(accountHash string, tenantName string, container
 	return al, json.Unmarshal(r.body, &al)
 }
 
-//Delete HCS object
+// DeleteHCSObject Delete HCS object
 //Path /api/v1/accounts/{account_hash}/hcs/objects/{tenant_name}/{container_name}/{object_name}
 func (api *HWApi) DeleteHCSObject(accountHash string, tenantName string, containerName string, objectName string, recursive ...bool) (bool, error) {
 	q := map[string]string{}
@@ -258,7 +258,7 @@ func (api *HWApi) DeleteHCSObject(accountHash string, tenantName string, contain
 	_, e := api.Request(
 		&Request{
 			Method: DELETE,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
 			Query:  q,
 		},
 	)
@@ -268,13 +268,13 @@ func (api *HWApi) DeleteHCSObject(accountHash string, tenantName string, contain
 	return true, nil
 }
 
-//Returns specific object on the specified account.
+// GetHCSObject Returns specific object on the specified account.
 //Path /api/v1/accounts/{account_hash}/hcs/objects/{tenant_name}/{container_name}/{object_name}
 func (api *HWApi) GetHCSObject(accountHash string, tenantName string, containerName string, objectName string) (*HcsObject, error) {
 	r, e := api.Request(
 		&Request{
 			Method: GET,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
 		},
 	)
 	if e != nil {
@@ -284,14 +284,14 @@ func (api *HWApi) GetHCSObject(accountHash string, tenantName string, containerN
 	return al, json.Unmarshal(r.body, al)
 }
 
-//Update an existing object
+// UpdateHCSObject Update an existing object
 //Path /api/v1/accounts/{account_hash}/hcs/objects/{tenant_name}/{container_name}/{object_name}
 //JSON representation of the Hcs Object to update. The structure should match the response class model without the 'etag' and 'lastUpdated' fields.
 func (api *HWApi) UpdateHCSObject(accountHash string, tenantName string, containerName string, objectName string, h *HcsObject) (*HcsObject, error) {
 	r, e := api.Request(
 		&Request{
 			Method: PUT,
-			Url:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
+			URL:    fmt.Sprintf("/api/v1/accounts/%s/hcs/objects/%s/%s/%s", accountHash, tenantName, containerName, objectName),
 			Body:   h,
 		},
 	)

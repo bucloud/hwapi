@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -24,13 +25,13 @@ type downloadJob struct {
 
 var (
 	downloadWorker chan downloadJob
+	wg             sync.WaitGroup
 )
 
-/**
- * Search log file list, accountHash should supplied, if $end-$start > 1day, search action would act as multiple request, in order to avoid 10000 lines limitation
- * Note this search method would search files according to ctime(create time)
- * filename sample cds/2020/08/27/cds_20200827-210002-61686853007ch4.log.gz
- */
+// SearchLogs search logs
+// Search log file list, accountHash should supplied, if $end-$start > 1day, search action would act as multiple request, in order to avoid 10000 lines limitation
+// Note this search method would search files according to ctime(create time)
+// filename sample cds/2020/08/27/cds_20200827-210002-61686853007ch4.log.gz
 func (api *HWApi) SearchLogs(hosthash, logtype string, startDate, endDate time.Time) ([]string, error) {
 	// // regexp replacer
 	// rp := regexp.MustCompile(`^`)
@@ -49,7 +50,7 @@ func (api *HWApi) SearchLogs(hosthash, logtype string, startDate, endDate time.T
 	// test response lines, if gt 10000, seperate request to two request
 	r, e := api.Request(&Request{
 		Method: GET,
-		Url:    storageURL + "/" + hosthash,
+		URL:    storageURL + "/" + hosthash,
 		// timelayout 2006-01-02T15:04:05Z
 		Query: map[string]string{
 			"marker":     startDate.Format(logtype + "/2006/01/02/" + logtype + "_20060102-150405"),
@@ -108,15 +109,15 @@ func (api *HWApi) saveState(k string, v *downState) error {
 	return api.cache.SaveToFile(cacheFilePath)
 }
 
-// SetDownloadConcurrency accesslogs download concurrent count
+// SetWorkers accesslogs download concurrent count
 // maxConcurrent should less than 100
-func (api *HWApi) SetDownloadConcurrency(n uint) {
+func (api *HWApi) SetWorkers(n uint) {
 	if n >= 100 {
-		api.downloadConcurrency = 100
+		api.workers = 100
 	} else if n <= 0 {
-		api.downloadConcurrency = 1
+		api.workers = 1
 	} else {
-		api.downloadConcurrency = n
+		api.workers = n
 	}
 }
 
@@ -125,7 +126,7 @@ func (api *HWApi) SetDownloadConcurrency(n uint) {
 func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
-	if api.downloadConcurrency == 1 {
+	if api.workers == 1 {
 		for _, u := range urls {
 			if _, e := api.download(destDir, u); e != nil {
 				return false, e
@@ -137,25 +138,27 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 		downloadWorker = nil
 	}
 	defer func() { downloadWorker = nil }()
-	downloadWorker = make(chan downloadJob, api.downloadConcurrency)
+	downloadWorker = make(chan downloadJob, api.workers)
 	// start worker
-	for i := uint(1); i <= api.downloadConcurrency; i++ {
-		go api.downloadCurrently()
+	for i := uint(1); i <= api.workers; i++ {
+		go api.downloadConcurrently()
 	}
-
 	for _, u := range urls {
 		downloadWorker <- downloadJob{
 			URL:  u,
 			Dest: destDir,
 		}
 	}
+	close(downloadWorker)
+	wg.Wait()
 	return true, nil
 }
 
 // DownloadCurrently currently download logs,
-func (api *HWApi) downloadCurrently() {
+func (api *HWApi) downloadConcurrently() {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
+	wg.Add(1)
 	for j := range downloadWorker {
 		destPath := j.Dest + "/"
 		u := j.URL
@@ -216,6 +219,7 @@ func (api *HWApi) downloadCurrently() {
 		t.State = 1
 		api.saveState(u, t)
 	}
+	wg.Done()
 }
 
 // Download accesslogs
