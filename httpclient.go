@@ -137,12 +137,14 @@ func (api *HWApi) addHeaders(req *http.Request) {
 	if api.AuthToken == nil {
 		api.AuthToken = &AuthToken{}
 	}
-	if strings.Contains(req.URL.Host, "hcs.hwcdn") && api.AuthToken.LogTokens != "" {
-		req.Header.Set("X-Auth-Token", api.AuthToken.LogTokens)
-	} else if api.AuthToken.AccessToken != "" {
-		req.Header.Set("Authorization", strFirstToUpper(api.AuthToken.TokenType)+" "+api.AuthToken.AccessToken)
+	if strings.Contains(req.URL.Host, "highwinds.com") {
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Accept", "application/json, text/plain, */*")
+		if api.AuthToken.AccessToken != "" {
+			req.Header.Set("Authorization", strFirstToUpper(api.AuthToken.TokenType)+" "+api.AuthToken.AccessToken)
+		}
+	} else if strings.Contains(req.URL.Host, "hcs.hwcdn") && api.AuthToken.LogTokens != "" {
+		req.Header.Set("X-Auth-Token", api.AuthToken.LogTokens)
 	}
 }
 
