@@ -113,11 +113,11 @@ func (api *HWApi) saveState(k string, v *downState) error {
 // maxConcurrent should less than 100
 func (api *HWApi) SetWorkers(n uint) {
 	if n >= 100 {
-		api.downloadConcurrency = 100
+		api.workers = 100
 	} else if n <= 0 {
-		api.downloadConcurrency = 1
+		api.workers = 1
 	} else {
-		api.downloadConcurrency = n
+		api.workers = n
 	}
 }
 
