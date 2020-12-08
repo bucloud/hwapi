@@ -160,7 +160,6 @@ func (api *HWApi) downloadConcurrently() {
 	// md5 := md5.New()
 	wg.Add(1)
 	for j := range downloadWorker {
-		destPath := j.Dest + "/"
 		u := j.URL
 		if !strings.HasPrefix(u, "http") {
 			u = storageURL + "/" + u
@@ -178,7 +177,13 @@ func (api *HWApi) downloadConcurrently() {
 			api.saveState(u, t)
 			continue
 		}
-		destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+		var destPath string
+		if j.Dest == "" || j.Dest == "." || j.Dest == "./" {
+			destPath = "./"
+			destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+		} else {
+			destPath = j.Dest + "/"
+		}
 		r, e2 := api.Fetch(&http.Request{
 			Method: GET,
 			URL:    url,
@@ -226,7 +231,6 @@ func (api *HWApi) downloadConcurrently() {
 func (api *HWApi) download(destDir, u string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
 	// md5 := md5.New()
-	destPath := destDir + "/"
 	if !strings.HasPrefix(u, "http") {
 		u = storageURL + "/" + u
 	}
@@ -241,7 +245,13 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 		t.State = 10
 		return false, e
 	}
-	destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+	var destPath string
+	if destDir == "" || destDir == "." || destDir == "./" {
+		destPath = "./"
+		destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+	} else {
+		destPath = destDir + "/"
+	}
 	r, e2 := api.Fetch(&http.Request{
 		Method: GET,
 		URL:    url,
