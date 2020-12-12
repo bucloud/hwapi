@@ -13,12 +13,23 @@ type BillingDetails struct {
 
 //Contact information for a contact on a CDN account
 type Contact struct {
-	ID        int    `json:"id"`        //Unique id for this contact
-	FirstName string `json:"firstName"` //First name
-	LastName  string `json:"lastName"`  //Last name
-	Email     string `json:"email"`     //Email
-	Phone     string `json:"phone"`     //Phone number
-	Fax       string `json:"fax"`       //Fax number
+	ID        int      `json:"id"`        //Unique id for this contact
+	FirstName string   `json:"firstName"` //First name
+	LastName  string   `json:"lastName"`  //Last name
+	Email     string   `json:"email"`     //Email
+	Phone     string   `json:"phone"`     //Phone number
+	Fax       string   `json:"fax"`       //Fax number
+	Address   *Address `json:"address,omitempty"`
+}
+
+// Address owned by Contact only
+type Address struct {
+	Address1 string `json:"line1,omitempty"`
+	Address2 string `json:"line2,omitempty"`
+	City     string `json:"city,omitempty"`
+	State    string `json:"state,omitempty"`
+	ZipCode  string `json:"postalCode,omitempty"`
+	Country  string `json:"country,omitempty"`
 }
 
 // Activity Activity
@@ -90,9 +101,9 @@ type Account struct {
 	MaximumDirectSubAccounts  int        `json:"maximumDirectSubAccounts"`  //The maximum number of subaccounts allowed on this account
 	MaximumHosts              int        `json:"maximumHosts"`              //The maximum number of hosts allowed on this account
 	MaxHcsTenants             int        `json:"maxHcsTenants"`             //The maximum number of HCS tenants allowed on this account
-	BillingContact            Contact    `json:"billingContact"`            //The accounts billing contact information
-	PrimaryContact            Contact    `json:"primaryContact"`            //The account's primary contact information
-	TechnicalContact          Contact    `json:"technicalContact"`          //The account's technical contact information
+	BillingContact            *Contact   `json:"billingContact"`            //The accounts billing contact information
+	PrimaryContact            *Contact   `json:"primaryContact"`            //The account's primary contact information
+	TechnicalContact          *Contact   `json:"technicalContact"`          //The account's technical contact information
 	SubAccounts               []*Account `json:"subAccounts"`               //If part of a recursive subaccount fetch, this will contain the subaccounts of the account
 	Services                  []*Service `json:"services"`                  //Services enabled on this account
 }
