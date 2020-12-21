@@ -12,6 +12,7 @@ import (
 )
 
 /*
+*Deprecated after 2021-01-01
 Accesslogs are available via http&ftp but have different effection
 1. http can search logs by hosthash and filename prefix, note time frame is available in prefix and useable, but http interface is just a method to substitute for ftp
 2. login ftp with accounthash only, root dir is a list contains almost all hosthash, but it's not all hosthash!!!

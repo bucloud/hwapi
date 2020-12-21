@@ -15,7 +15,9 @@ type AuthToken struct {
 	UserAgent    string `json:"user_agent"`             //User agent
 	Application  string `json:"application"`            //Application
 	IP           string `json:"ip"`                     //IP
-	LogTokens    string `json:"-"`                      //token used to access accesslogs
+
+	// LogTokens deprecated after 2021-01-01
+	LogTokens string `json:"-"` //token used to access accesslogs,
 }
 
 // Authentication simple token
@@ -151,7 +153,13 @@ func (api *HWApi) Auth(u, p string, accesslog ...bool) (*AuthToken, error) {
 
 //SetToken Check if token available, than set to AuthToken if available
 func (api *HWApi) SetToken(t string) {
-	api.AuthToken.AccessToken = t
+	if api.AuthToken == nil {
+		api.AuthToken = &AuthToken{
+			AccessToken: t,
+		}
+	} else {
+		api.AuthToken.AccessToken = t
+	}
 }
 
 //Use /api/v1/users/me to check accesstoken vaildation
