@@ -57,9 +57,7 @@ type GCSHMacKey struct {
 
 	// AccessID similar to AWS clientID
 	AccessID string `json:"accessId,omitempty"`
-	// PrivateKeyData base64 encoded json data used by GCS, Note decode this to string before use it
-	// Only accessable after the first create privateKey and un-recoverable
-	PrivateKeyData string `json:"privateKeyData,omitempty"`
+	Secret   string `json:"secret,omitempty"`
 }
 
 // CreateGCSAccount create a new GCSAccount/service_account
