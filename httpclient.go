@@ -127,6 +127,9 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 }
 
 func (api *HWApi) addAuthHeaders(req *http.Request) {
+	if req.Header == nil {
+		req.Header = http.Header{}
+	}
 	if api.AuthToken == nil {
 		api.AuthToken = &AuthToken{}
 	}
