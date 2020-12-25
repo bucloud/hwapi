@@ -69,7 +69,7 @@ func (api *HWApi) CreateGCSAccount(accountHash, description, name string) (*GCSA
 			URL:    fmt.Sprintf("/api/v2/accounts/%s/service_accounts", accountHash),
 			Body: map[string]string{
 				"description": description,
-				"name":        name,
+				"displayName": name,
 			},
 		},
 	)
