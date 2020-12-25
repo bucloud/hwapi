@@ -47,7 +47,7 @@ type SearchLogsOptions struct {
 	StartDate   time.Time
 	EndDate     time.Time
 	LogType     string
-	HCSCredentials
+	*HCSCredentials
 }
 
 // HCSCredentials credential used to create HCS client
@@ -60,12 +60,20 @@ type HCSCredentials struct {
 	SecretKey   string
 }
 
+// SetCredentials set global credentials
+func (api *HWApi) SetCredentials(c *HCSCredentials) {
+	api.hcsCredentials = c
+}
+
 // SearchLogsV2 search logs
 // Search log file list, accountHash should supplied, if $end-$start > 1day, search action would act as multiple request, in order to avoid 10000 lines limitation
 // Note this search method would search files according to ctime(create time)
 // filename sample cds/2020/08/27/cds_20200827-210002-61686853007ch4.log.gz
 func (api *HWApi) SearchLogsV2(opt *SearchLogsOptions) ([]string, error) {
 	res := []string{}
+	if opt.HCSCredentials == nil && api.hcsCredentials != nil {
+		opt.HCSCredentials = api.hcsCredentials
+	}
 	if opt.PrivateKeyJSON == "" && (opt.AccessKeyID == "" || opt.SecretKey == "") {
 		return []string{}, fmt.Errorf("credentials missed, either privateKey or accessKey/secretKey pair should provided")
 	}

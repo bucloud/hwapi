@@ -8,12 +8,13 @@ import (
 
 // HWApi highwinds API struct
 type HWApi struct {
-	hc          *http.Transport
-	AuthToken   *AuthToken
-	authInfo    *authInfo
-	CurrentUser *User
-	cache       *fastcache.Cache
-	workers     uint
+	hc             *http.Transport
+	AuthToken      *AuthToken
+	authInfo       *authInfo
+	hcsCredentials *HCSCredentials
+	CurrentUser    *User
+	cache          *fastcache.Cache
+	workers        uint
 }
 
 const (
@@ -21,9 +22,6 @@ const (
 	maxCacheSize  int    = 128 * 1024 * 1024
 	cacheFilePath string = "./.state"
 )
-
-func init() {
-}
 
 //Init HWApi
 //Default timeout is 30s and maxConns is 10

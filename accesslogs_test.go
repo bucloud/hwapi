@@ -35,7 +35,7 @@ func TestSearchLogsV2(t *testing.T) {
 		HostHash:    "f6g4s8v3",
 		StartDate:   startDate,
 		EndDate:     endDate,
-		HCSCredentials: hwapi.HCSCredentials{
+		HCSCredentials: &hwapi.HCSCredentials{
 			AccessKeyID: *ak,
 			SecretKey:   *sk,
 		},
@@ -48,7 +48,7 @@ func TestSearchLogsV2(t *testing.T) {
 		HostHash:    "f6g4s8v3",
 		StartDate:   startDate,
 		EndDate:     endDate,
-		HCSCredentials: hwapi.HCSCredentials{
+		HCSCredentials: &hwapi.HCSCredentials{
 			PrivateKeyJSON: *pj,
 		},
 	}); err != nil {
@@ -75,7 +75,7 @@ func BenchmarkSearchLogsGCS(b *testing.B) {
 			HostHash:    "f6g4s8v3",
 			StartDate:   startDate,
 			EndDate:     endDate,
-			HCSCredentials: hwapi.HCSCredentials{
+			HCSCredentials: &hwapi.HCSCredentials{
 				PrivateKeyJSON: *pj,
 			},
 		}); err != nil {
@@ -101,7 +101,7 @@ func BenchmarkSearchLogsAWS(b *testing.B) {
 			HostHash:    "f6g4s8v3",
 			StartDate:   startDate,
 			EndDate:     endDate,
-			HCSCredentials: hwapi.HCSCredentials{
+			HCSCredentials: &hwapi.HCSCredentials{
 				AccessKeyID: *ak,
 				SecretKey:   *sk,
 			},
