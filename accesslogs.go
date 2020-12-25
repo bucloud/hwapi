@@ -1,10 +1,12 @@
 package hwapi
 
 import (
+	"bytes"
 	"context"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -24,8 +26,21 @@ import (
 	"google.golang.org/api/option"
 )
 
+var (
+	downloadWorker chan downloadJob
+	wg             sync.WaitGroup
+
+	// ErrRemoteConfigNotFound remote configure not found
+	ErrRemoteConfigNotFound = errors.New("AWS S3 remote configure not found")
+	// ErrRemoteDestFormat remote dest format error
+	ErrRemoteDestFormat = errors.New("remote dest format error, must been remoteConfigName:bucketName:/path")
+	// ErrGCSCredentialsMissed configure error
+	ErrGCSCredentialsMissed = errors.New("credentials missed, either privateKey or accessKey/secretKey pair should provided")
+	// ErrConvertStateTOByte marshall state to byte failed
+	ErrConvertStateTOByte = errors.New("Parse interface{} to []byte failed")
+)
+
 /*
-*Deprecated after 2021-01-01
 Accesslogs are available via http&ftp but have different effection
 1. http can search logs by hosthash and filename prefix, note time frame is available in prefix and useable, but http interface is just a method to substitute for ftp
 2. login ftp with accounthash only, root dir is a list contains almost all hosthash, but it's not all hosthash!!!
@@ -36,11 +51,6 @@ type downloadJob struct {
 	URL  string
 	Dest string
 }
-
-var (
-	downloadWorker chan downloadJob
-	wg             sync.WaitGroup
-)
 
 // SearchLogsOptions used to search logs
 type SearchLogsOptions struct {
@@ -77,7 +87,7 @@ func (api *HWApi) SearchLogsV2(opt *SearchLogsOptions) ([]string, error) {
 		opt.HCSCredentials = api.hcsCredentials
 	}
 	if opt.PrivateKeyJSON == "" && (opt.AccessKeyID == "" || opt.SecretKey == "") {
-		return []string{}, fmt.Errorf("credentials missed, either privateKey or accessKey/secretKey pair should provided")
+		return []string{}, ErrGCSCredentialsMissed
 	}
 	if opt.LogType == "" {
 		opt.LogType = "cds"
@@ -245,7 +255,7 @@ func (api *HWApi) saveState(k string, v *downState) error {
 	v.EndedDate = time.Now().UTC()
 	b, e := json.Marshal(v)
 	if e != nil {
-		return fmt.Errorf("Parse interface{} to []byte failed")
+		return ErrConvertStateTOByte
 	}
 	api.cache.Set([]byte(k), b)
 	return api.cache.SaveToFile(cacheFilePath)
@@ -263,7 +273,16 @@ func (api *HWApi) SetWorkers(n uint) {
 	}
 }
 
+// SetRemoteS3Conf set AWS s3 conf, used when download raw logs to AWS s3
+func (api *HWApi) SetRemoteS3Conf(remoteName string, conf *aws.Config) {
+	if api.remoteS3 == nil {
+		api.remoteS3 = map[string]*aws.Config{}
+	}
+	api.remoteS3[remoteName] = conf
+}
+
 // Downloads wrap accesslogs download
+// destDir support cloud storage, format remoteConfigName:bucketName:path1/path2
 // urls need to download while store in disk, you can re-call this method when error returned
 func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
@@ -277,10 +296,48 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	for i := uint(1); i <= api.workers; i++ {
 		go api.downloadConcurrently()
 	}
+	var remoteName, remotePath, bucketName string
+	var S3 *s3.S3
+	if strings.Index(destDir, ":") > 0 {
+		a := strings.Split(destDir, ":")
+		if len(a) != 3 {
+			return false, ErrRemoteDestFormat
+		}
+		remoteName = a[0]
+		bucketName = a[1]
+		remotePath = a[2]
+		if api.remoteS3 == nil || api.remoteS3[remoteName] == nil {
+			return false, ErrRemoteConfigNotFound
+		}
+		sess, err := session.NewSession(api.remoteS3[remoteName])
+		if err != nil {
+			return false, err
+		}
+		S3 = s3.New(sess)
+	} else {
+		remoteName = ""
+		remotePath = destDir
+	}
 	for _, u := range urls {
-		downloadWorker <- downloadJob{
-			URL:  u,
-			Dest: destDir,
+		if strings.Index(destDir, ":") > 0 {
+			resp, _ := S3.PutObjectRequest(&s3.PutObjectInput{
+				Bucket: &bucketName,
+				Key:    aws.String(remotePath + regexp.MustCompile(`.*([0-9]{4}\/[0-9]{2}\/[0-9]{2}\/[^\/]+)\?.*$`).ReplaceAllString(u, "$1")),
+			})
+			dstURL, err := resp.Presign(24 * time.Hour)
+			if err != nil {
+				fmt.Println("error presigning request", err)
+				return false, err
+			}
+			downloadWorker <- downloadJob{
+				URL:  u,
+				Dest: dstURL,
+			}
+		} else {
+			downloadWorker <- downloadJob{
+				URL:  u,
+				Dest: destDir,
+			}
 		}
 	}
 	close(downloadWorker)
@@ -295,7 +352,7 @@ func (api *HWApi) downloadConcurrently() {
 	wg.Add(1)
 	for j := range downloadWorker {
 		if _, e := api.download(j.Dest, j.URL); e != nil {
-			fmt.Printf("download %s failed, %s\n", j.URL, e.Error())
+			fmt.Printf("handle %s failed, %s\n", j.URL, e.Error())
 		}
 	}
 	wg.Done()
@@ -323,14 +380,6 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 	}
 	t.StartedDate = time.Now().UTC()
 
-	var destPath string
-	if destDir == "" || destDir == "." || destDir == "./" {
-		destPath = "./"
-		// destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
-		destPath += regexp.MustCompile(`.*([0-9]{4}\/[0-9]{2}\/[0-9]{2}\/)[^\/]+$`).ReplaceAllString(url.Path, "$1")
-	} else {
-		destPath = destDir + "/"
-	}
 	r, e2 := api.Fetch(&http.Request{
 		Method: GET,
 		URL:    url,
@@ -340,7 +389,28 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 		return false, e2
 	}
 	t.Size = r.Headers.Get("Content-Length")
+	// try upload to remote
+	if strings.HasPrefix(destDir, "http") {
+		putRequest, _ := http.NewRequest(PUT, destDir, bytes.NewReader(r.body))
+		_, e2 := api.Fetch(putRequest)
+		if e2 != nil {
+			t.State = 15
+			return false, e2
+		}
+		t.State = 1
+		return true, nil
+	}
 	// store body to dest
+
+	var destPath string
+	if destDir == "" || destDir == "." || destDir == "./" {
+		destPath = "./"
+		// destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+		destPath += regexp.MustCompile(`.*([0-9]{4}\/[0-9]{2}\/[0-9]{2}\/)[^\/]+$`).ReplaceAllString(url.Path, "$1")
+	} else {
+		destPath = destDir + "/"
+	}
+
 	if mkdirError := os.MkdirAll(destPath, 0755); mkdirError != nil {
 		t.State = 20
 		return false, mkdirError
