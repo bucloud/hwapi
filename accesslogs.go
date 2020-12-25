@@ -2,6 +2,7 @@ package hwapi
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -304,17 +305,17 @@ func (api *HWApi) downloadConcurrently() {
 		if !strings.HasPrefix(u, "http") {
 			u = storageURL + "/" + u
 		}
-		t := api.getCacheData(u)
+		t := api.getCacheData(md5String(u))
 		if t.State == 1 {
 			continue
 		}
 		t.StartedDate = time.Now().UTC()
-		defer api.saveState(u, t)
+		defer api.saveState(md5String(u), t)
 		url, e := url.Parse(strings.Trim(u, "\r"))
 		if e != nil {
 			t.State = 10
 			fmt.Printf("parse accesslog url %s failed, %s", u, e.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		var destPath string
@@ -331,7 +332,7 @@ func (api *HWApi) downloadConcurrently() {
 		if e2 != nil {
 			t.State = 11
 			fmt.Printf("download accesslogs %s failed, %s", u, e2.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		t.Size = r.Headers.Get("Content-Length")
@@ -339,32 +340,38 @@ func (api *HWApi) downloadConcurrently() {
 		if mkdirError := os.MkdirAll(destPath, 0755); mkdirError != nil {
 			t.State = 20
 			fmt.Printf("create dir %s failed, %s", destPath, mkdirError.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		f, fe := os.OpenFile(destPath+url.Path[strings.LastIndex(url.Path, "/"):], os.O_WRONLY|os.O_CREATE, 0755)
 		if fe != nil {
 			t.State = 12
 			fmt.Printf("open file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		if _, fwe := f.Write(r.body); fwe != nil {
 			t.State = 13
 			fmt.Printf("write logdata to file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fwe.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		if closeError := f.Close(); closeError != nil {
 			t.State = 14
 			fmt.Printf("close file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
-			api.saveState(u, t)
+			api.saveState(md5String(u), t)
 			continue
 		}
 		t.State = 1
-		api.saveState(u, t)
+		api.saveState(md5String(u), t)
 	}
 	wg.Done()
+}
+
+func md5String(s string) string {
+	h := md5.New()
+	h.Write([]byte(s))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 // Download accesslogs
@@ -374,12 +381,12 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 	if !strings.HasPrefix(u, "http") {
 		u = storageURL + "/" + u
 	}
-	t := api.getCacheData(u)
+	t := api.getCacheData(md5String(u))
 	if t.State == 1 {
 		return true, nil
 	}
 	t.StartedDate = time.Now().UTC()
-	defer api.saveState(u, t)
+	defer api.saveState(md5String(u), t)
 	url, e := url.Parse(strings.Trim(u, "\r"))
 	if e != nil {
 		t.State = 10
