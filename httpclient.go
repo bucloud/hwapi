@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -53,15 +54,12 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 	//parse body
 	buf := &bytes.Buffer{}
 	switch t := req.Body.(type) {
-	case int:
-		buf.WriteString(string(t))
-	case int64:
-		buf.WriteString(string(t))
-	case int32:
-		buf.WriteString(string(t))
+	case int, int64, int32, float32, float64:
+		buf.WriteString(fmt.Sprintf("%d", t))
 	case string:
 		buf.WriteString(t)
 	case bool:
+		buf.WriteString(fmt.Sprintf("%t", t))
 	case nil:
 	default:
 		j, e := json.Marshal(t)
