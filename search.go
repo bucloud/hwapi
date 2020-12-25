@@ -10,12 +10,22 @@ import (
 // SearchResult Full text search for entities tied to an account
 //Path /api/v1/accounts/{account_hash}/search
 type SearchResult struct {
-	Hosts      []*HostName          `json:"hosts"`
-	Hostnames  []*HostName          `json:"hostnames"`
-	Origins    []*Origin            `json:"origins"`
-	HcsTenants []*map[string]string `json:"hcsTenants"` //HCS is outof support
-	Accounts   []*Account           `json:"accounts"`
-	Users      []*User              `json:"users"`
+	Hosts      []*HostName                `json:"hosts"`
+	Hostnames  []*HostName                `json:"hostnames"`
+	Origins    []*Origin                  `json:"origins"`
+	HcsTenants []*map[string]string       `json:"hcsTenants"` //HCS is outof support
+	Accounts   []*AccountInSearchResponse `json:"accounts"`
+	Users      []*User                    `json:"users"`
+}
+
+// AccountInSearchResponse accountInfo in search result
+type AccountInSearchResponse struct {
+	DisplayName string `json:"displayName"`
+	AccountName string `json:"accountName"`
+	AccountHash string `json:"accountHash"`
+	Parent      string `json:"parent"`
+	GrandParent string `json:"grandparent"`
+	ID          int    `json:"id"`
 }
 
 // UnmarshalJSON re-format string number to number
