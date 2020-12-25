@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/VictoriaMetrics/fastcache"
+	"github.com/aws/aws-sdk-go/aws"
 )
 
 // HWApi highwinds API struct
@@ -12,6 +13,7 @@ type HWApi struct {
 	AuthToken      *AuthToken
 	authInfo       *authInfo
 	hcsCredentials *HCSCredentials
+	remoteS3       map[string]*aws.Config
 	CurrentUser    *User
 	cache          *fastcache.Cache
 	workers        uint
