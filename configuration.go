@@ -3907,7 +3907,7 @@ type HostName struct {
 	HostHash    string      `json:"hostHash"`
 	AccountName string      `json:"accountName"`
 	Name        string      `json:"name"`
-	ScopeID     string      `json:"scopeId"`
+	ScopeID     int         `json:"scopeId"`
 }
 
 // Graph Configuration graph

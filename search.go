@@ -3,6 +3,7 @@ package hwapi
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strconv"
 )
 
@@ -15,6 +16,18 @@ type SearchResult struct {
 	HcsTenants []*map[string]string `json:"hcsTenants"` //HCS is outof support
 	Accounts   []*Account           `json:"accounts"`
 	Users      []*User              `json:"users"`
+}
+
+// UnmarshalJSON re-format string number to number
+func (c *SearchResult) UnmarshalJSON(b []byte) error {
+	type t SearchResult
+	r := &t{}
+	if err := json.Unmarshal(regexp.MustCompile(`"([0-9]+)"`).ReplaceAll(b, []byte("$1")), r); err != nil {
+		return err
+	}
+	// setDefaultField(conf, reflect.StructTag(""))
+	*c = (SearchResult)(*r)
+	return nil
 }
 
 // Search accounts? hosts? origins? certificates
