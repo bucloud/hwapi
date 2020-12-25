@@ -50,8 +50,8 @@ func (api *HWApi) Search(accountHash string, search string, maxResults int) (*Se
 			Method: GET,
 			URL:    fmt.Sprintf("/api/v1/accounts/%s/search", accountHash),
 			Query: map[string]string{
-				"search":    search,
-				"maxResult": strconv.Itoa(maxResults),
+				"search":     search,
+				"maxResults": strconv.Itoa(maxResults),
 			},
 		},
 	)
