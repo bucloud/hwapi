@@ -116,6 +116,11 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 	if ee != nil {
 		panic(ee)
 	}
+	r.Header = http.Header{}
+	r.Header.Set("X-Application", "GO-HWApi")
+	r.Header.Set("X-Application-Id", "GO-HWApi")
+	r.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1")
+
 	for k, v := range req.Headers {
 		r.Header.Set(k, v)
 	}
@@ -123,17 +128,7 @@ func (api *HWApi) Request(req *Request) (*Response, error) {
 	return api.Fetch(r)
 }
 
-func (api *HWApi) addHeaders(req *http.Request) {
-	// if !strings.Contains(req.URL.Host, "hcs.hwcdn") && !strings.HasSuffix(req.URL.Path, "auth/token") && api.AuthToken == nil {
-	// 	return nil, errors.New("This endpoint requires authentication")
-	// }
-	if req.Header == nil {
-		req.Header = http.Header{}
-	}
-	req.Header.Set("X-Application", "GO-HWApi")
-	req.Header.Set("X-Application-Id", "GO-HWApi")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 GO-HWApi/0.1")
-
+func (api *HWApi) addAuthHeaders(req *http.Request) {
 	if api.AuthToken == nil {
 		api.AuthToken = &AuthToken{}
 	}
@@ -150,7 +145,7 @@ func (api *HWApi) addHeaders(req *http.Request) {
 
 //Fetch wrap http.Request add required headers and parse response
 func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
-	api.addHeaders(req)
+	api.addAuthHeaders(req)
 	rep, err := api.hc.RoundTrip(req)
 	if err != nil {
 		return nil, err

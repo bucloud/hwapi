@@ -1,6 +1,8 @@
 package hwapi
 
 import (
+	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +11,15 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"cloud.google.com/go/storage"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 /*
@@ -29,7 +40,127 @@ var (
 	wg             sync.WaitGroup
 )
 
-// SearchLogs search logs
+// SearchLogsOptions used to search logs
+type SearchLogsOptions struct {
+	HostHash    string
+	AccountHash string
+	StartDate   time.Time
+	EndDate     time.Time
+	LogType     string
+	HCSCredentials
+}
+
+// HCSCredentials credential used to create HCS client
+type HCSCredentials struct {
+	// PrivateKeyJSON base64 encoded string
+	PrivateKeyJSON string
+
+	// accesskeyID pair
+	AccessKeyID string
+	SecretKey   string
+}
+
+// SearchLogsV2 search logs
+// Search log file list, accountHash should supplied, if $end-$start > 1day, search action would act as multiple request, in order to avoid 10000 lines limitation
+// Note this search method would search files according to ctime(create time)
+// filename sample cds/2020/08/27/cds_20200827-210002-61686853007ch4.log.gz
+func (api *HWApi) SearchLogsV2(opt *SearchLogsOptions) ([]string, error) {
+	res := []string{}
+	if opt.PrivateKeyJSON == "" && (opt.AccessKeyID == "" || opt.SecretKey == "") {
+		return []string{}, fmt.Errorf("credentials missed, either privateKey or accessKey/secretKey pair should provided")
+	}
+	if opt.LogType == "" {
+		opt.LogType = "cds"
+	}
+	if opt.AccountHash == "" {
+		opt.AccountHash = api.CurrentUser.AccountHash
+	}
+	bucketName := "sp-cdn-logs-" + opt.AccountHash
+	markerStart := opt.HostHash + "/" + opt.StartDate.Format(opt.LogType+"/2006/01/02/"+opt.LogType+"_20060102-150405")
+	markerEnd := opt.HostHash + "/" + opt.EndDate.Format(opt.LogType+"/2006/01/02/"+opt.LogType+"_20060102-150405")
+	if opt.PrivateKeyJSON != "" {
+		ctx := context.Background()
+		jsonString, err := base64.RawStdEncoding.DecodeString(opt.PrivateKeyJSON)
+		if err != nil {
+			return res, err
+		}
+		client, err := storage.NewClient(ctx, option.WithCredentialsJSON(jsonString), option.WithScopes(storage.ScopeReadOnly))
+		if err != nil {
+			return res, err
+		}
+		conf, _ := google.JWTConfigFromJSON(jsonString)
+
+		objects := client.Bucket(bucketName).Objects(ctx, &storage.Query{
+			// Prefix:      opt.HostHash + "/",
+			StartOffset: markerStart,
+			EndOffset:   markerEnd,
+		})
+		for {
+			object, err := objects.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				return res, err
+			}
+			// generate v4 signed url
+			newURL, err := storage.SignedURL(bucketName, object.Name, &storage.SignedURLOptions{
+				Scheme:         storage.SigningSchemeV4,
+				Method:         "GET",
+				GoogleAccessID: conf.Email,
+				PrivateKey:     conf.PrivateKey,
+				Expires:        time.Now().Add(24 * time.Hour),
+			})
+			if err != nil {
+				return res, err
+			}
+			res = append(res, newURL)
+		}
+		return res, nil
+	}
+	// try use S3 as handler
+	sess := session.Must(session.NewSession(&aws.Config{
+		Credentials: credentials.NewStaticCredentials(opt.AccessKeyID, opt.SecretKey, ""),
+		Endpoint:    aws.String("http://storage.googleapis.com"),
+		Region:      aws.String("us-east-4"),
+	}))
+
+	// Create a downloader with the session and default options
+	svc := s3.New(sess)
+	// downloader := s3manager.NewDownloader(sess)
+	for {
+		r, err := svc.ListObjects(&s3.ListObjectsInput{
+			// Prefix: aws.String(opt.HostHash),
+			Bucket: aws.String(bucketName),
+			Marker: &markerStart,
+			// StartAfter: aws.String("f6g4s8v3/cds/2020/12/15/cds_20201215-222826"),
+		})
+		if err != nil {
+			return res, err
+		}
+		for j := 0; j < len(r.Contents); j++ {
+			if *r.Contents[j].Key > markerEnd {
+				return res, nil
+			}
+			req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+				Bucket: aws.String(bucketName),
+				Key:    aws.String(*r.Contents[j].Key),
+			})
+			newURL, err := req.Presign(24 * time.Hour)
+			if err != nil {
+				return res, err
+			}
+			res = append(res, newURL)
+		}
+		if *r.IsTruncated {
+			markerStart = *r.NextMarker
+		} else {
+			return res, nil
+		}
+	}
+}
+
+// SearchLogs search logs in HCS, Note deprecated after 2021-01-01
 // Search log file list, accountHash should supplied, if $end-$start > 1day, search action would act as multiple request, in order to avoid 10000 lines limitation
 // Note this search method would search files according to ctime(create time)
 // filename sample cds/2020/08/27/cds_20200827-210002-61686853007ch4.log.gz
