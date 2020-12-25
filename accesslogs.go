@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -266,14 +267,6 @@ func (api *HWApi) SetWorkers(n uint) {
 // urls need to download while store in disk, you can re-call this method when error returned
 func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	// store this job and history urls in local temp file with logToken as fileName
-	// md5 := md5.New()
-	if api.workers == 1 {
-		for _, u := range urls {
-			if _, e := api.download(destDir, u); e != nil {
-				return false, e
-			}
-		}
-	}
 	// reset channel
 	if downloadWorker != nil {
 		downloadWorker = nil
@@ -301,69 +294,9 @@ func (api *HWApi) downloadConcurrently() {
 	// md5 := md5.New()
 	wg.Add(1)
 	for j := range downloadWorker {
-		u := j.URL
-		if !strings.HasPrefix(u, "http") {
-			u = storageURL + "/" + u
+		if _, e := api.download(j.Dest, j.URL); e != nil {
+			fmt.Printf("download %s failed, %s\n", j.URL, e.Error())
 		}
-		t := api.getCacheData(md5String(u))
-		if t.State == 1 {
-			continue
-		}
-		t.StartedDate = time.Now().UTC()
-		defer api.saveState(md5String(u), t)
-		url, e := url.Parse(strings.Trim(u, "\r"))
-		if e != nil {
-			t.State = 10
-			fmt.Printf("parse accesslog url %s failed, %s", u, e.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		var destPath string
-		if j.Dest == "" || j.Dest == "." || j.Dest == "./" {
-			destPath = "./"
-			destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
-		} else {
-			destPath = j.Dest + "/"
-		}
-		r, e2 := api.Fetch(&http.Request{
-			Method: GET,
-			URL:    url,
-		})
-		if e2 != nil {
-			t.State = 11
-			fmt.Printf("download accesslogs %s failed, %s", u, e2.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		t.Size = r.Headers.Get("Content-Length")
-		// store body to dest
-		if mkdirError := os.MkdirAll(destPath, 0755); mkdirError != nil {
-			t.State = 20
-			fmt.Printf("create dir %s failed, %s", destPath, mkdirError.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		f, fe := os.OpenFile(destPath+url.Path[strings.LastIndex(url.Path, "/"):], os.O_WRONLY|os.O_CREATE, 0755)
-		if fe != nil {
-			t.State = 12
-			fmt.Printf("open file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		if _, fwe := f.Write(r.body); fwe != nil {
-			t.State = 13
-			fmt.Printf("write logdata to file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fwe.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		if closeError := f.Close(); closeError != nil {
-			t.State = 14
-			fmt.Printf("close file %s failed, %s", destPath+url.Path[strings.LastIndex(url.Path, "/"):], fe.Error())
-			api.saveState(md5String(u), t)
-			continue
-		}
-		t.State = 1
-		api.saveState(md5String(u), t)
 	}
 	wg.Done()
 }
@@ -381,21 +314,20 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 	if !strings.HasPrefix(u, "http") {
 		u = storageURL + "/" + u
 	}
-	t := api.getCacheData(md5String(u))
+	url, _ := url.Parse(strings.Trim(u, "\r"))
+	t := api.getCacheData(md5String(url.Path))
+	defer api.saveState(md5String(url.Path), t)
+
 	if t.State == 1 {
 		return true, nil
 	}
 	t.StartedDate = time.Now().UTC()
-	defer api.saveState(md5String(u), t)
-	url, e := url.Parse(strings.Trim(u, "\r"))
-	if e != nil {
-		t.State = 10
-		return false, e
-	}
+
 	var destPath string
 	if destDir == "" || destDir == "." || destDir == "./" {
 		destPath = "./"
-		destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+		// destPath += strings.Replace(url.Path[:strings.LastIndex(url.Path, "/")], "v1/AUTH_hwcdn-logstore", "", 1)
+		destPath += regexp.MustCompile(`.*([0-9]{4}\/[0-9]{2}\/[0-9]{2}\/)[^\/]+$`).ReplaceAllString(url.Path, "$1")
 	} else {
 		destPath = destDir + "/"
 	}
