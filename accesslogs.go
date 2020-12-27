@@ -28,7 +28,6 @@ import (
 
 var (
 	downloadWorker chan downloadJob
-	wg             sync.WaitGroup
 
 	// ErrRemoteConfigNotFound remote configure not found
 	ErrRemoteConfigNotFound = errors.New("AWS S3 remote configure not found")
@@ -292,9 +291,14 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	}
 	defer func() { downloadWorker = nil }()
 	downloadWorker = make(chan downloadJob, api.workers)
+	var wg sync.WaitGroup
+	wg.Add(int(api.workers))
 	// start worker
 	for i := uint(1); i <= api.workers; i++ {
-		go api.downloadConcurrently()
+		go func() {
+			api.downloadConcurrently()
+			wg.Done()
+		}()
 	}
 	var remoteName, remotePath, bucketName string
 	var S3 *s3.S3
@@ -348,14 +352,11 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 // DownloadCurrently currently download logs,
 func (api *HWApi) downloadConcurrently() {
 	// store this job and history urls in local temp file with logToken as fileName
-	// md5 := md5.New()
-	wg.Add(1)
 	for j := range downloadWorker {
 		if _, e := api.download(j.Dest, j.URL); e != nil {
 			fmt.Printf("handle %s failed, %s\n", j.URL, e.Error())
 		}
 	}
-	wg.Done()
 }
 
 func md5String(s string) string {
