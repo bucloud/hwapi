@@ -289,7 +289,13 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	if downloadWorker != nil {
 		downloadWorker = nil
 	}
-	defer func() { downloadWorker = nil }()
+	defer func() {
+		_, ok := <-downloadWorker
+		if ok {
+			fmt.Printf("there still job exists, but force close workers\n")
+			close(downloadWorker)
+		}
+	}()
 	downloadWorker = make(chan downloadJob, api.workers)
 	var wg sync.WaitGroup
 	wg.Add(int(api.workers))
