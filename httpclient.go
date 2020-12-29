@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	apiErrors "github.com/bucloud/hwapi/errors"
 )
@@ -147,16 +148,22 @@ func (api *HWApi) addAuthHeaders(req *http.Request) {
 //Fetch wrap http.Request add required headers and parse response
 func (api *HWApi) Fetch(req *http.Request) (*Response, error) {
 	api.addAuthHeaders(req)
+	startRequest := time.Now()
 	rep, err := api.hc.RoundTrip(req)
 	if err != nil {
 		return nil, err
 	}
-	defer rep.Body.Close()
+	defer func() {
+		rep.Body.Close()
+		if api.Log != nil {
+			api.Log.Debug().Str("request", req.URL.String()).Interface("headers", req.Header).Str("remote_address", req.RemoteAddr).Int("status_code", rep.StatusCode).Int64("size", req.ContentLength).Dur("spent", time.Since(startRequest))
+		}
+	}()
+
 	d, ioerr := ioutil.ReadAll(rep.Body)
 	if ioerr != nil {
 		return nil, errors.New("parse response failed")
 	}
-
 	if rep.StatusCode > 300 || rep.StatusCode < 200 {
 		//tre parse error info in response
 		errorInfo := &apiErrors.ErrorResponse{}

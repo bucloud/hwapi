@@ -15,6 +15,7 @@ require (
 	github.com/mitchellh/mapstructure v1.3.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 	github.com/pelletier/go-toml v1.8.0 // indirect
+	github.com/rs/zerolog v1.20.0
 	github.com/spf13/viper v1.7.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.3 // indirect
 	golang.org/x/mod v0.3.0 // indirect

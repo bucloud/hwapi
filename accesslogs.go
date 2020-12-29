@@ -257,12 +257,13 @@ func (api *HWApi) saveState(k string, v *downState) error {
 		return ErrConvertStateTOByte
 	}
 	api.cache.Set([]byte(k), b)
-	return api.cache.SaveToFile(cacheFilePath)
+	return nil
+	// return api.cache.SaveToFile(cacheFilePath)
 }
 
 // SetWorkers accesslogs download concurrent count
 // maxConcurrent should less than 100
-func (api *HWApi) SetWorkers(n uint) {
+func (api *HWApi) SetWorkers(n int) {
 	if n >= 100 {
 		api.workers = 100
 	} else if n <= 0 {
@@ -292,15 +293,20 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 	defer func() {
 		_, ok := <-downloadWorker
 		if ok {
-			fmt.Printf("there still job exists, but force close workers\n")
+			if api.Log != nil {
+				api.Log.Error().Msg("concurrent downloads failed")
+			}
 			close(downloadWorker)
+		}
+		if e := api.cache.SaveToFile(cacheFilePath); e != nil && api.Log != nil {
+			api.Log.Error().Str("dest", cacheFilePath).Err(e).Msg("save cache file failed")
 		}
 	}()
 	downloadWorker = make(chan downloadJob, api.workers)
 	var wg sync.WaitGroup
-	wg.Add(int(api.workers))
+	wg.Add(api.workers)
 	// start worker
-	for i := uint(1); i <= api.workers; i++ {
+	for i := 1; i <= api.workers; i++ {
 		go func() {
 			api.downloadConcurrently()
 			wg.Done()
@@ -336,7 +342,9 @@ func (api *HWApi) Downloads(destDir string, urls ...string) (bool, error) {
 			})
 			dstURL, err := resp.Presign(24 * time.Hour)
 			if err != nil {
-				fmt.Println("error presigning request", err)
+				if api.Log != nil {
+					api.Log.Debug().Str("url", u).Err(err).Msg("presign url failed")
+				}
 				return false, err
 			}
 			downloadWorker <- downloadJob{
@@ -360,7 +368,12 @@ func (api *HWApi) downloadConcurrently() {
 	// store this job and history urls in local temp file with logToken as fileName
 	for j := range downloadWorker {
 		if _, e := api.download(j.Dest, j.URL); e != nil {
-			fmt.Printf("handle %s failed, %s\n", j.URL, e.Error())
+			if api.Log != nil {
+				api.Log.Error().Str("url", j.URL).Str("dest", j.Dest).Err(e).Msg("download failed")
+			}
+		}
+		if api.Log != nil {
+			api.Log.Debug().Str("url", j.URL).Str("dest", j.Dest).Msg("download success")
 		}
 	}
 }
@@ -386,7 +399,12 @@ func (api *HWApi) download(destDir, u string) (bool, error) {
 		return true, nil
 	}
 	t.StartedDate = time.Now().UTC()
-
+	defer func() {
+		api.saveState(md5String(url.Path), t)
+		if api.Log != nil {
+			api.Log.Debug().Str("path", url.Path).Int("result_code", t.State).Time("started", t.StartedDate).Float64("spent", time.Since(t.StartedDate).Seconds()).Msg("download file ended")
+		}
+	}()
 	r, e2 := api.Fetch(&http.Request{
 		Method: GET,
 		URL:    url,
