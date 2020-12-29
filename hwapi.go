@@ -84,7 +84,7 @@ func Init(options ...interface{}) *HWApi {
 		}
 	}
 	if api.cache == nil {
-		api.cache, _ = fastcache.LoadFromFileOrNew(cacheFilePath,maxCacheSize)
+		api.cache = fastcache.LoadFromFileOrNew(cacheFilePath,maxCacheSize)
 	}
 	return api
 }
