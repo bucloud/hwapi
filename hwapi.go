@@ -84,7 +84,17 @@ func Init(options ...interface{}) *HWApi {
 		}
 	}
 	if api.cache == nil {
-		api.cache = fastcache.LoadFromFileOrNew(cacheFilePath,maxCacheSize)
+		api.cache = fastcache.LoadFromFileOrNew(cacheFilePath, maxCacheSize)
+		if forceSaveCacheInterval > time.Second*0 {
+			go func() {
+				for {
+					if e := api.cache.SaveToFile(cacheFilePath); e != nil && api.Log != nil {
+						api.Log.Error().Err(e).Str("path", cacheFilePath).Msg("save cachedata failed")
+					}
+					time.Sleep(forceSaveCacheInterval)
+				}
+			}()
+		}
 	}
 	return api
 }
